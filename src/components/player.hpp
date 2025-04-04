@@ -2,6 +2,7 @@
 #include "transform.hpp"
 
 COMPONENT(Player)
+
 private:
     Vector2f velocity;
     Transform* transform;
@@ -10,4 +11,5 @@ private:
 public:
     void update(float dt) override;
     void ready() override;
-};
+
+COMPONENT_END()

@@ -12,4 +12,5 @@ COMPONENT(CircleMovement)
     void ready() override;
     void update(float dt) override;
     ~CircleMovement() {}
-};
+
+COMPONENT_END()

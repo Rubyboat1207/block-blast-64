@@ -186,15 +186,20 @@ namespace GameObjects {
          * @param freed_child The child which was freed
          */
         void onChildFreed(GameObject* freed_child);
-        
+
         ~GameObject();
         GameObject();
     };
 
+
+    // TODO: (Sam) This is kinda ugly. We should find a better way to replace it so VS Code doesn't scream about the ended brace
+    // Defines a component and ends its type
     #define COMPONENT(type) struct type : public GameObjects::Component { \
         uint32_t getType() override { \
             return GameObjects::typeIdHasher(#type); \
         } 
+
+    #define COMPONENT_END() };
     
     #define GET_COMPONENT(type) getComponent<type>(#type)
 };

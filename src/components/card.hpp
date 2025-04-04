@@ -8,4 +8,4 @@ COMPONENT(Card)
 public:
     Transform* transform;
     
-};
+COMPONENT_END()

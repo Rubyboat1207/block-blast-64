@@ -4,6 +4,7 @@
 #include <libdragon.h>
 
 COMPONENT(SpriteRenderer)
+
 private:
     const char* spritePath;
     sprite_t* sprite;
@@ -17,4 +18,5 @@ public:
     const char* getSpritePath();
     sprite_t* getSprite();
     ~SpriteRenderer() {}
-};
+    
+COMPONENT_END()

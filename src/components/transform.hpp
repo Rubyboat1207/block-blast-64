@@ -3,10 +3,12 @@
 #include "../math.hpp"
 
 COMPONENT(Transform)
+
     // switch to a vector3 at some point if needed
     Vector2f localPosition;
     float rotation;
 
     Vector2f getGlobalPosition();
     ~Transform() {}
-};
+    
+COMPONENT_END()
