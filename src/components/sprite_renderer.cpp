@@ -5,8 +5,8 @@
 
 using namespace GameObjects;
 
-void SpriteRenderer::update(float dt) {
-    Component::update(dt);
+void SpriteRenderer::render() {
+    Component::render();
     if(!visible) {
         return;
     }

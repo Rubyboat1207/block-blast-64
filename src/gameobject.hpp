@@ -1,8 +1,9 @@
 #pragma once
 #include <set>
+#include <map>
 #include "math.hpp"
 #include <libdragon.h>
-#define USING_CAMERA false
+#define USING_CAMERA true
 
 
 /// @brief Namespace containing primary gameobject related core functionality
@@ -22,15 +23,19 @@ namespace GameObjects {
 
     /// @brief Handles game object management
     struct GameManager {
-        std::set<GameObject*> active_objects;
-        std::set<GameObject*> free_queue;
+        std::set<GameObject*> activeObjects = {};
+        std::set<GameObject*> freeQueue = {};
+        controller_data controllerState;
+        // std::map<GameObject*, GameObject*[4]> references = {};
         surface_t* display;
         #if USING_CAMERA
         Vector2f camera_pos;
         #endif
 
-        void request_free(GameObject* gameObject);
+        void requestFree(GameObject* gameObject);
         void update();
+        void setRoot();
+        // void addManagedReference(GameObject* refering, GameObject* reference);
     };
 
     struct Component {
@@ -42,8 +47,14 @@ namespace GameObjects {
                 ready();
             }
         }
+        virtual void render() {
+
+        }
         virtual void ready() {
 
+        }
+        virtual void onChildFreed(GameObject* freed_child) {
+            
         }
         bool active;
         virtual ~Component() {
@@ -59,11 +70,13 @@ namespace GameObjects {
         GameObject* parent;
         GameObject* managedReferences[GAME_OBJECT_MANAGED_REFERNECE_LIMIT];
         GameManager* gameManager;
+        int componentCount = 0;
         bool active;
 
         void update(float dt);
+        void render();
         void ready();
-        void queue_free();
+        void queueFree();
 
         template <typename T>
         T* getComponent(const char* name) {
@@ -80,8 +93,9 @@ namespace GameObjects {
             }
             return nullptr;
         }
-        bool add_component(Component* component);
-        bool add_child(GameObject* child);
+        bool addComponent(Component* component);
+        bool addChild(GameObject* child);
+        void onChildFreed(GameObject* freed_child);
         ~GameObject();
         GameObject();
     };

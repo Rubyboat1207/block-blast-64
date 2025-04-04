@@ -21,7 +21,30 @@ struct Vector2f {
         x -= other.x;
         y -= other.y;
     }
+    inline Vector2f operator-(Vector2f other) {
+        return Vector2f{x - other.x, y - other.y};
+    }
+    inline Vector2f operator*(float scalar) {
+        return Vector2f{x * scalar, y * scalar};
+    }
+    inline Vector2f operator/(float scalar) {
+        return Vector2f{x / scalar, y / scalar};
+    }
+    inline void operator*=(float scalar) {
+        x *= scalar;
+        y *= scalar;
+    }
+
+    Vector2f moveTowards(Vector2f to, float delta);
+    float lengthSquared() {
+        return x * x + y * y;
+    }
+    float length();
 };
+
+constexpr float clamp(float value, float min, float max) {
+    return (value < min) ? min : (value > max) ? max : value;
+}
 
 const float CosCoefficients[2] = { 
     -0.000000011485057369884462f,

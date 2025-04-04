@@ -10,7 +10,7 @@ private:
     Transform* transform;
 public:
     bool visible = true;
-    void update(float dt) override;
+    void render() override;
     void ready() override;
     void setSprite(const char* spritePath);
     const char* getSpritePath();

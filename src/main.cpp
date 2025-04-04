@@ -16,6 +16,7 @@ int main(void)
     console_set_debug(true);
     GameObjects::GameManager* gm = new GameObjects::GameManager();
     init_main_scene(gm);
+    graphics_set_color(0x000000, 0xFFFFFFFF);
     while(1) {
         surface_t* disp = display_get();
         gm->display = disp;

@@ -24,3 +24,17 @@
 
 //     return Vector2f{sinx, cosx};
 // }
+
+Vector2f Vector2f::moveTowards(Vector2f to, float delta)
+{
+    // taken from the godot engine
+    Vector2f v = *this;
+	Vector2f vd = to - v;
+	float len = vd.length();
+	return len <= delta || len < 0.5f ? to : v + vd / len * delta;
+}
+
+float Vector2f::length()
+{
+    return sqrtf(lengthSquared());
+}
