@@ -9,6 +9,7 @@ private:
     sprite_t* sprite;
     Transform* transform;
 public:
+    bool useTransparency = false;
     bool visible = true;
     void render() override;
     void ready() override;

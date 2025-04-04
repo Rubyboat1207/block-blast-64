@@ -12,15 +12,14 @@ void SpriteRenderer::render() {
     }
     Vector2f globalPos = transform->getGlobalPosition();
     #if USING_CAMERA
-        if(visible) {
-            Vector2f camera_pos = gameObject->gameManager->camera_pos;
-            graphics_draw_sprite(gameObject->gameManager->display, globalPos.x + camera_pos.x, globalPos.y + camera_pos.y, sprite);
-        }
-    #else
-        if(visible) {
-            graphics_draw_sprite(gameObject->gameManager->display, globalPos.x, globalPos.y, sprite);
-        }
+    globalPos += gameObject->gameManager->camera_pos;
     #endif
+
+    if(useTransparency) {
+        graphics_draw_sprite_trans(gameObject->gameManager->display, globalPos.x, globalPos.y, sprite);
+    }else {
+        graphics_draw_sprite(gameObject->gameManager->display, globalPos.x, globalPos.y, sprite);
+    }
 }
 
 void SpriteRenderer::ready() {

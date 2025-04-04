@@ -25,6 +25,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     tophat->addComponent(new Transform());
     auto sr2 = new SpriteRenderer();
     sr2->setSprite("rom:/tophat.sprite");
+    sr2->useTransparency = true;
     tophat->addComponent(sr2);
     go->addChild(tophat);
     tophat->GET_COMPONENT(Transform)->localPosition = Vector2f{(float) sr2->getSprite()->width / 2, -20};
