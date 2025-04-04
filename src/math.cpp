@@ -4,7 +4,6 @@
 
 void Vector2f::moveTowardsWithState(Vector2f to, float delta)
 {
-    // taken from the godot engine
 	Vector2f vd = to - this;
 	float len = vd.length();
     if(len <= delta || len < 0.5f ) {

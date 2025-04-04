@@ -38,14 +38,25 @@ struct Vector2f {
         y *= scalar;
     }
 
+    /// @brief Moves the vector towards a target position, taken from the godot engine
+    /// @param to The target position
+    /// @param delta How much to move towards the target position
     void moveTowardsWithState(Vector2f to, float delta);
+    /// @brief Returns a new vector moved towards a target position, taken from the godot engine
+    /// @param to The target position
+    /// @param delta How much to move towards the target position
+    /// @return A new vector moved towards the target position
     Vector2f vectorMovedTowards(Vector2f to, float delta);
+    /// @returns the length of the vector squared (NOTE: much cheaper than length(), use this if you don't need the actual length)
     float lengthSquared() {
         return x * x + y * y;
     }
+    /// @returns the length of the vector
     float length();
 };
 
+/// @brief Keeps a value between a minimum and maximum value
+/// @return value between min and max, inclusive
 constexpr float clamp(float value, float min, float max) {
     return (value < min) ? min : (value > max) ? max : value;
 }
