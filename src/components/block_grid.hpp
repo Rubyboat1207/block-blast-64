@@ -1,3 +1,4 @@
+#pragma once
 #include "../gameobject.hpp"
 #include "transform.hpp"
 
@@ -14,13 +15,10 @@ COMPONENT(BlockGrid)
     Vector2i size;
     Transform* transform;
     BlockState** state;
-    BlockState** visualState;
     sprite_t* empty_sprite;
     sprite_t* filled_sprite;
     void ready() override;
     void render() override;
     ~BlockGrid() {}
-    void setVisualState(Vector2i pos, BlockState state);
-    void cleanVisualState();
-    void setState(Vector2i pos, BlockState state);
+    void setState(Vector2i pos, BlockState block_state);
 COMPONENT_END()

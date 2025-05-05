@@ -7,6 +7,7 @@ void Selector::ready()
 
 void Selector::update(float dt)
 {
+    Component::update(dt);
     auto controller = gameObject->gameManager->controllerState.c;
     if(controller->C_up) {
         selected = 0;

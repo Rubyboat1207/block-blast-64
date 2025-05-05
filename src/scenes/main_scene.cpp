@@ -4,6 +4,7 @@
 #include "../components/sprite_renderer.hpp"
 #include "../components/selector.hpp"
 #include "../components/block_grid.hpp"
+#include "../components/cursor.hpp"
 
 
 void init_main_scene(GameObjects::GameManager* gm) {
@@ -21,7 +22,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     GameObjects::GameObject* selection = new GameObjects::GameObject();
     {
         auto transform = new Transform();
-        transform->localPosition = {27, 107};
+        transform->localPosition = {31, 41};
 
         SpriteRenderer* sr = new SpriteRenderer();
         sr->setSprite("rom:/selection.sprite");
@@ -42,9 +43,40 @@ void init_main_scene(GameObjects::GameManager* gm) {
         auto blg = new BlockGrid();
         blg->size = {8, 8};
         blg->transform = transform;
+        blg->empty_sprite = sprite_load("rom:/block_empty.sprite");
+        blg->filled_sprite = sprite_load("rom:/block_normal.sprite");
 
         grid->addComponent(transform);
         grid->addComponent(blg);
+    }
+
+    GameObjects::GameObject* cursor_container = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {105, 41};
+
+        cursor_container->addComponent(transform);
+    }
+
+    GameObjects::GameObject* cursor = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {105, 41};
+
+        auto blg = new BlockGrid();
+        blg->size = {3, 3};
+        blg->transform = transform;
+        blg->empty_sprite = nullptr;
+        blg->filled_sprite = sprite_load("rom:/block_normal.sprite");
+
+        auto c = new Cursor();
+        c->display_grid = blg;
+        c->transform = transform;
+        c->bounds = {192, 192};
+
+        cursor->addComponent(transform);
+        cursor->addComponent(blg);
+        cursor->addComponent(c);
     }
 
     gm->activeObjects.insert(background);
@@ -52,5 +84,6 @@ void init_main_scene(GameObjects::GameManager* gm) {
 
     background->addChild(selection);
     background->addChild(grid);
-
+    background->addChild(cursor_container);
+    cursor_container->addChild(cursor);
 }
