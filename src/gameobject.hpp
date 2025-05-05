@@ -3,7 +3,7 @@
 #include <map>
 #include "math.hpp"
 #include <libdragon.h>
-#define USING_CAMERA true
+#define USING_CAMERA false
 
 
 /**

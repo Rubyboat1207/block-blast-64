@@ -21,7 +21,7 @@ $(BUILD_DIR)/hello.dfs: $(wildcard filesystem/*)
 $(BUILD_DIR)/hello.elf: $(OBJS)
 
 clean:
-	rm -f $(BUILD_DIR)/* *.z64
+	rm -Rf $(BUILD_DIR)/* *.z64
 .PHONY: clean
 
 -include $(wildcard $(BUILD_DIR)/*.d)

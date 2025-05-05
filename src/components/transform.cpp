@@ -22,3 +22,9 @@ Vector2f Transform::getGlobalPosition()
 
     return gp;
 }
+
+Transform::Transform()
+{
+    this->localPosition = {0,0};
+    this->rotation = 0;
+}

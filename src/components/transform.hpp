@@ -10,5 +10,6 @@ COMPONENT(Transform)
 
     Vector2f getGlobalPosition();
     ~Transform() {}
+    Transform();
     
 COMPONENT_END()

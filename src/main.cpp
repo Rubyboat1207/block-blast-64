@@ -5,7 +5,8 @@
 
 int main(void)
 {
-    display_init(RESOLUTION_320x240, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_RESAMPLE);
+    // this requires the preview branch of libdragon for now, as of (5/5/25)
+    display_init(RESOLUTION_320x240, DEPTH_16_BPP, 2, GAMMA_NONE, FILTERS_DISABLED);
 
     dfs_init(DFS_DEFAULT_LOCATION);
     debug_init_isviewer();
