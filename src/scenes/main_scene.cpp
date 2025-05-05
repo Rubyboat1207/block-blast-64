@@ -78,6 +78,18 @@ void init_main_scene(GameObjects::GameManager* gm) {
         cursor->addComponent(blg);
         cursor->addComponent(c);
     }
+    GameObjects::GameObject* hand = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {0, 0};
+
+        SpriteRenderer* sr = new SpriteRenderer();
+        sr->useTransparency = true;
+        sr->setSprite("rom:/hand.sprite");
+
+        hand->addComponent(sr);
+        hand->addComponent(transform);
+    }
 
     gm->activeObjects.insert(background);
     background->gameManager = gm;
@@ -86,4 +98,5 @@ void init_main_scene(GameObjects::GameManager* gm) {
     background->addChild(grid);
     background->addChild(cursor_container);
     cursor_container->addChild(cursor);
+    cursor->addChild(hand);
 }
