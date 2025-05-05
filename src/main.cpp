@@ -23,8 +23,11 @@ int main(void)
        
         /*Fill the screen */
         graphics_fill_screen( disp, 0xFFFFFFFF );
+        rdpq_attach( disp, NULL );
 
-        gm->update(); 
+        gm->update();
+
+        rdpq_detach_wait();
 
         /* Force backbuffer flip */
         display_show(disp);
