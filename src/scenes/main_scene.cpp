@@ -5,9 +5,14 @@
 #include "../components/selector.hpp"
 #include "../components/block_grid.hpp"
 #include "../components/cursor.hpp"
+#include "../components/game_logic.hpp"
 
 
 void init_main_scene(GameObjects::GameManager* gm) {
+    GameObjects::GameObject* gameLogic = new GameObjects::GameObject();
+    auto gl = new GameLogic();
+    gameLogic->addComponent(gl);
+
     GameObjects::GameObject* background = new GameObjects::GameObject();
     {
         auto transform = new Transform();
@@ -34,6 +39,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
         selection->addComponent(transform);
         selection->addComponent(sr);
         selection->addComponent(selector);
+        gl->selector = selector;
     }
     GameObjects::GameObject* grid = new GameObjects::GameObject();
     {
@@ -48,6 +54,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
 
         grid->addComponent(transform);
         grid->addComponent(blg);
+        gl->main_grid = blg;
     }
 
     GameObjects::GameObject* cursor_container = new GameObjects::GameObject();
@@ -58,6 +65,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
         cursor_container->addComponent(transform);
     }
 
+    auto c = new Cursor();
     GameObjects::GameObject* cursor = new GameObjects::GameObject();
     {
         auto transform = new Transform();
@@ -69,10 +77,10 @@ void init_main_scene(GameObjects::GameManager* gm) {
         blg->empty_sprite = nullptr;
         blg->filled_sprite = sprite_load("rom:/block_normal.sprite");
 
-        auto c = new Cursor();
         c->display_grid = blg;
         c->transform = transform;
         c->bounds = {192, 192};
+        gl->cursor = c;
 
         cursor->addComponent(transform);
         cursor->addComponent(blg);
@@ -89,14 +97,53 @@ void init_main_scene(GameObjects::GameManager* gm) {
 
         hand->addComponent(sr);
         hand->addComponent(transform);
+        c->hand = transform;
     }
+
+    
+
 
     gm->activeObjects.insert(background);
     background->gameManager = gm;
 
+    background->addChild(gameLogic);
     background->addChild(selection);
     background->addChild(grid);
     background->addChild(cursor_container);
     cursor_container->addChild(cursor);
     cursor->addChild(hand);
+
+    for(int i = 0; i < 3; i++) {
+        GameObjects::GameObject* previewContainer = new GameObjects::GameObject();
+        {
+            auto transform = new Transform();
+            if(i == 0) {
+                transform->localPosition = {33, 43};
+            }else if(i == 1) {
+                transform->localPosition = {33, 110};
+            }else if(i == 2) {
+                transform->localPosition = {33, 175};
+            }
+            previewContainer->addComponent(transform);
+        }
+
+        GameObjects::GameObject* preview = new GameObjects::GameObject();
+        auto transform = new Transform();
+        transform->localPosition = {0,0};
+        
+
+        BlockGrid* blg = new BlockGrid();
+        blg->size = {3,3};
+        blg->transform = transform;
+        blg->empty_sprite = nullptr;
+        blg->filled_sprite = sprite_load("rom:/block_tiny.sprite");
+
+        preview->addComponent(blg);
+        preview->addComponent(transform);
+
+        gameLogic->addChild(previewContainer);
+        previewContainer->addChild(preview);
+
+        gl->previews[i] = blg;
+    }
 }

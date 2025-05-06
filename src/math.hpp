@@ -9,7 +9,7 @@ struct Vector2f {
     float x;
     float y;
 
-    inline Vector2f operator+(Vector2f other) {
+    inline Vector2f operator+(Vector2f other) const {
         return Vector2f{x + other.x, y + other.y};
     }
 
@@ -21,16 +21,16 @@ struct Vector2f {
         x -= other.x;
         y -= other.y;
     }
-    inline Vector2f operator-(Vector2f other) {
+    inline Vector2f operator-(Vector2f other) const {
         return Vector2f{x - other.x, y - other.y};
     }
-    inline Vector2f operator-(Vector2f* other) {
+    inline Vector2f operator-(Vector2f* other) const{
         return Vector2f{x - other->x, y - other->y};
     }
-    inline Vector2f operator*(float scalar) {
+    inline Vector2f operator*(float scalar) const {
         return Vector2f{x * scalar, y * scalar};
     }
-    inline Vector2f operator/(float scalar) {
+    inline Vector2f operator/(float scalar) const {
         return Vector2f{x / scalar, y / scalar};
     }
     inline void operator*=(float scalar) {

@@ -1,3 +1,4 @@
+#pragma once
 #include "../gameobject.hpp"
 #include "transform.hpp"
 
@@ -7,7 +8,5 @@ COMPONENT(Selector)
     void ready() override;
     void update(float dt);
     ~Selector() {}
-    void setVisualState();
-    void cleanVisualState();
-    void setState();
+    void select(int i);
 COMPONENT_END()

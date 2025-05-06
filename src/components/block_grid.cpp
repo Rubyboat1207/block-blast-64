@@ -16,6 +16,9 @@ void BlockGrid::ready()
 }
 
 void BlockGrid::render() {
+    if(!visible) {
+        return;
+    }
     auto offset = transform->getGlobalPosition();
     for(int x = 0; x < size.x; x++) {
         for(int y = 0; y < size.y; y++) {
@@ -53,4 +56,56 @@ void BlockGrid::render() {
 void BlockGrid::setState(Vector2i pos, BlockState block_state)
 {
     state[pos.x][pos.y] = block_state;
+}
+
+
+
+Vector2i BlockGrid::getBounding()
+{
+    if (!this->state || !this->filled_sprite)
+        return {0, 0};
+
+    int blockSize = filled_sprite->width;
+
+    Vector2i minPos{size.x, size.y};
+    Vector2i maxPos{0, 0};
+    bool found = false;
+
+    for (int y = 0; y < size.y; ++y) {
+        for (int x = 0; x < size.x; ++x) {
+            if (state[x][y] != BlockState::EMPTY) {
+                if (!found) {
+                    minPos = { x, y };
+                    maxPos = { x, y };
+                    found = true;
+                } else {
+                    if (x < minPos.x) minPos.x = x;
+                    if (y < minPos.y) minPos.y = y;
+                    if (x > maxPos.x) maxPos.x = x;
+                    if (y > maxPos.y) maxPos.y = y;
+                }
+            }
+        }
+    }
+
+    if (found) {
+        return {
+            (maxPos.x - minPos.x + 1) * blockSize,
+            (maxPos.y - minPos.y + 1) * blockSize
+        };
+    } else {
+        return {
+            0,
+            0
+        };
+    }
+}
+
+void BlockGrid::clear()
+{
+    for (int y = 0; y < size.y; ++y) {
+        for (int x = 0; x < size.x; ++x) {
+            state[x][y] = BlockState::EMPTY;
+        }
+    }
 }

@@ -16,9 +16,17 @@ void SpriteRenderer::render() {
     #endif
 
     if(useTransparency) {
-        graphics_draw_sprite_trans(gameObject->gameManager->display, globalPos.x, globalPos.y, sprite);
+        rdpq_set_mode_standard();
+        rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
+        rdpq_set_prim_color(RGBA32(255,255,255,255));
+        rdpq_mode_alphacompare(1);
+        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, NULL);
     }else {
-        graphics_draw_sprite(gameObject->gameManager->display, globalPos.x, globalPos.y, sprite);
+        rdpq_set_mode_standard();
+        rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
+        rdpq_set_prim_color(RGBA32(255,255,255,255));
+        rdpq_mode_alphacompare(0);
+        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, NULL);
     }
 }
 
