@@ -7,6 +7,8 @@
 
 COMPONENT(Cursor)
     BlockGrid* display_grid;
+    BlockGrid* preview_grid;
+    Vector2i last_grid_pos{};
     float speed = 300.0f;
     float acceleration = 1500.0f;
     Vector2f bounds;
@@ -19,5 +21,6 @@ COMPONENT(Cursor)
     void update(float dt) override;
     void update_collision();
     Vector2i get_closest_grid_space(BlockGrid* grid) const;
+    void update_preview_grid(Vector2i* pos);
     ~Cursor() {}
 COMPONENT_END()

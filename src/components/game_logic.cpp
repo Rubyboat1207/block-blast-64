@@ -247,12 +247,12 @@ void GameLogic::on_selector_update(int selectedIndex)
         }
     }
     cursor->update_collision();
+    cursor->update_preview_grid(nullptr);
 }
 
 void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
 {
-    if (!isValid(grid, grid_position))
-    {
+    if(!isValid(grid, grid_position)) {
         return;
     }
     int total_added_points = 0;

@@ -19,6 +19,7 @@ COMPONENT(BlockGrid)
     sprite_t* empty_sprite;
     sprite_t* filled_sprite;
     Vector2i getBounding();
+    uint8_t alpha = 255;
     void ready() override;
     void render() override;
     ~BlockGrid() {}

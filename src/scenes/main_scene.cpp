@@ -57,6 +57,21 @@ void init_main_scene(GameObjects::GameManager* gm) {
         grid->addComponent(blg);
         gl->main_grid = blg;
     }
+    GameObjects::GameObject* preview_grid = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {0, 0};
+
+        auto blg = new BlockGrid();
+        blg->size = {8, 8};
+        blg->transform = transform;
+        blg->empty_sprite = nullptr;
+        blg->filled_sprite = sprite_load("rom:/block_normal.sprite");
+        blg->alpha = 128;
+
+        preview_grid->addComponent(transform);
+        preview_grid->addComponent(blg);
+    }
 
     GameObjects::GameObject* cursor_container = new GameObjects::GameObject();
     {
@@ -81,6 +96,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
         c->display_grid = blg;
         c->transform = transform;
         c->bounds = {192, 192};
+        c->preview_grid = preview_grid->GET_COMPONENT(BlockGrid);
         gl->cursor = c;
 
         cursor->addComponent(transform);
@@ -150,6 +166,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     background->addChild(gameLogic);
     background->addChild(selection);
     background->addChild(grid);
+    grid->addChild(preview_grid);
     background->addChild(cursor_container);
     cursor_container->addChild(cursor);
     cursor->addChild(hand);
