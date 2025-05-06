@@ -16,6 +16,7 @@ OBJS := $(patsubst $(SOURCE_DIR)/%.cpp, $(BUILD_DIR)/%.o, \
 
 BlockBlast64.z64: N64_ROM_TITLE="Block Blast 64"
 BlockBlast64.z64: $(BUILD_DIR)/BlockBlast64.dfs
+BlockBlast64.z64: N64_ED64ROMCONFIGFLAGS=-w eeprom4k
 
 $(BUILD_DIR)/BlockBlast64.dfs: $(wildcard filesystem/*)
 $(BUILD_DIR)/BlockBlast64.elf: $(OBJS)

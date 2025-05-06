@@ -1,8 +1,10 @@
 #pragma once
 #include "../gameobject.hpp"
 #include "transform.hpp"
+#include "sprite_renderer.hpp"
 #include "block_grid.hpp"
 #include "selector.hpp"
+#include "text_renderer.hpp"
 #include "cursor.hpp"
 #include <utility>
 #include <map>
@@ -22,11 +24,18 @@ enum class PieceType {
 
 
 COMPONENT(GameLogic)
+    bool is_game_over;
     BlockGrid* previews[3];
     BlockGrid* main_grid;
     Selector* selector;
     Cursor* cursor;
     Vector2f velocity{0,0};
+    SpriteRenderer* lose_screen;
+    TextRenderer* points_renderer;
+    TextRenderer* high_score_renderer;
+    uint32_t points = 0;
+    uint32_t high_score = 0;
+    uint8_t* save_buffer_1;
     int piece = 0;
     void ready() override;
     void update(float dt) override;
@@ -36,6 +45,10 @@ COMPONENT(GameLogic)
     void on_selector_update(int selectedIndex);
     void refresh_pieces(bool reselect);
     void place(BlockGrid* grid, Vector2i grid_position);
+    bool isValid(BlockGrid* grid, Vector2i grid_position);
+    void onGameOver();
+    void set_high_score(uint32_t hs);
+    void set_score(uint32_t score);
     ~GameLogic() {}
     GameLogic();
 COMPONENT_END()

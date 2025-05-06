@@ -3,6 +3,10 @@
 
 void Cursor::update(float dt) {
     Component::update(dt);
+
+    if(rootGameLogic->is_game_over) {
+        return;
+    }
     
     auto cs = gameObject->gameManager->controllerState.c[0];
     // Vector2f direction{cs.left ? -speed : 0 + cs.right ? speed : 0, cs.up ? -speed : 0 + cs.down ? speed : 0};

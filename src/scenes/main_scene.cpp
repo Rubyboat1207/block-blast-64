@@ -6,6 +6,7 @@
 #include "../components/block_grid.hpp"
 #include "../components/cursor.hpp"
 #include "../components/game_logic.hpp"
+#include "../components/text_renderer.hpp"
 
 
 void init_main_scene(GameObjects::GameManager* gm) {
@@ -99,6 +100,46 @@ void init_main_scene(GameObjects::GameManager* gm) {
         hand->addComponent(transform);
         c->hand = transform;
     }
+    GameObjects::GameObject* lose_screen = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {105, 41};
+
+        auto sr = new SpriteRenderer();
+        sr->setSprite("rom:/lose_screen.sprite");
+        sr->visible = false;
+
+        lose_screen->addComponent(transform);
+        lose_screen->addComponent(sr);
+
+        gl->lose_screen = sr;
+    }
+    GameObjects::GameObject* points = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {161, 22};
+        
+        auto textRenderer = new TextRenderer();
+        textRenderer->text = "0";
+
+        points->addComponent(transform);
+        points->addComponent(textRenderer);
+
+        gl->points_renderer = textRenderer;
+    }
+    GameObjects::GameObject* high_score = new GameObjects::GameObject();
+    {
+        auto transform = new Transform();
+        transform->localPosition = {31, 22};
+        
+        auto textRenderer = new TextRenderer();
+        textRenderer->text = "0";
+
+        high_score->addComponent(transform);
+        high_score->addComponent(textRenderer);
+
+        gl->high_score_renderer = textRenderer;
+    }
 
     
 
@@ -112,6 +153,9 @@ void init_main_scene(GameObjects::GameManager* gm) {
     background->addChild(cursor_container);
     cursor_container->addChild(cursor);
     cursor->addChild(hand);
+    background->addChild(lose_screen);
+    background->addChild(points);
+    background->addChild(high_score);
 
     for(int i = 0; i < 3; i++) {
         GameObjects::GameObject* previewContainer = new GameObjects::GameObject();

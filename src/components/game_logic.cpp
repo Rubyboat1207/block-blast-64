@@ -3,11 +3,31 @@
 #include <ctime>
 #include <climits>
 #include <vector>
+#include <string>
 
 GameLogic *rootGameLogic = nullptr;
 
 void GameLogic::ready()
 {
+    save_buffer_1 = new uint8_t[8];
+
+    eeprom_read(0, save_buffer_1);
+    if(save_buffer_1[0] == 0xFF) {
+        // This has not been read before. This means new save.
+        save_buffer_1[0] = 0x02;
+        for(int i = 1; i < 8; i++) {
+            save_buffer_1[i] = 0x00;
+        }
+    }
+    if(save_buffer_1[0] == 0x02) {
+        high_score = 0;
+
+        high_score |= save_buffer_1[1] << 24;
+        high_score |= save_buffer_1[2] << 16;
+        high_score |= save_buffer_1[3] << 8;
+        high_score |= save_buffer_1[4];
+        high_score_renderer->text = std::to_string(high_score);
+    }
 }
 
 void GameLogic::update(float dt)
@@ -16,6 +36,17 @@ void GameLogic::update(float dt)
     if (framesActive == 2)
     {
         refresh_pieces(false);
+    }
+
+    if (is_game_over)
+    {
+        if (gameObject->gameManager->controllerState.c->start)
+        {
+            refresh_pieces(false);
+            lose_screen->visible = false;
+            is_game_over = false;
+            set_score(0);
+        }
     }
 }
 
@@ -38,27 +69,22 @@ static Vector2i BIG_L[]{
     {0, 0},
     {0, 1},
     {0, 2},
-    {1, 2}
-};
+    {1, 2}};
 static Vector2i LITTLE_L[]{
     {0, 0},
     {0, 1},
-    {1, 1}
-};
+    {1, 1}};
 static Vector2i SQUARE[]{
     {0, 0},
     {0, 1},
     {1, 0},
-    {1, 1}
-};
+    {1, 1}};
 static Vector2i LINE[]{
     {0, 0},
     {1, 0},
-    {2, 0}
-};
+    {2, 0}};
 static Vector2i SINGLE[]{
-    {0, 0}
-};
+    {0, 0}};
 static Vector2i DIAGONAL[]{
     {0, 0},
     {1, 1},
@@ -120,10 +146,18 @@ static void rotate_piece(const Vector2i *src, int count, Vector2i *dst, int rota
     }
 }
 
-#define PIECE_CASE(p, size) case(PieceType::p): base = p; count = size; break;
+#define PIECE_CASE(p, size) \
+    case (PieceType::p):    \
+        base = p;           \
+        count = size;       \
+        break;
 
 #define ADD_PIECE(p) allowed_types[allowed_count++] = p;
-#define ADD_PIECE_AFTER_COUNT(p, count) if(pieces_since[p] > count) { ADD_PIECE(p) }
+#define ADD_PIECE_AFTER_COUNT(p, count) \
+    if (pieces_since[p] > count)        \
+    {                                   \
+        ADD_PIECE(p)                    \
+    }
 #define ADD_PIECE_UNIQUE_TO_SET(p) ADD_PIECE_AFTER_COUNT(p, 3)
 
 std::pair<int, Vector2i *> GameLogic::get_next_piece()
@@ -132,7 +166,7 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
     const Vector2i *base = nullptr;
     std::array<PieceType, static_cast<int>(PieceType::Last)> allowed_types{};
     int allowed_count = 0;
-    
+
     ADD_PIECE_UNIQUE_TO_SET(PieceType::BIG_L)
     ADD_PIECE_AFTER_COUNT(PieceType::BIG_SQUARE, 6)
     ADD_PIECE(PieceType::DIAGONAL)
@@ -143,10 +177,10 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
     ADD_PIECE(PieceType::SQUARE)
 
     PieceType piece_type = allowed_types[(random_u32() + framesActive) % allowed_count];
-    Vector2i* piece = nullptr;
     int count = 0;
 
-    switch(piece_type) {
+    switch (piece_type)
+    {
         PIECE_CASE(BIG_L, 4)
         PIECE_CASE(LITTLE_L, 3)
         PIECE_CASE(SQUARE, 4)
@@ -155,14 +189,15 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
         PIECE_CASE(DIAGONAL, 2)
         PIECE_CASE(BIG_SQUARE, 9)
         PIECE_CASE(DUO, 2)
-        default: assert(false);
+    default:
+        assert(false);
     }
 
-    for(int i = 0; i < (int) PieceType::Last; i++) {
-        pieces_since[(PieceType) i]++;
+    for (int i = 0; i < (int)PieceType::Last; i++)
+    {
+        pieces_since[(PieceType)i]++;
     }
     pieces_since[piece_type] = 0;
-    
 
     int rotations = random_u32() & 3; // 0,1,2,3 quarter‑turns
     rotate_piece(base, count, rotated, rotations);
@@ -216,7 +251,148 @@ void GameLogic::on_selector_update(int selectedIndex)
 
 void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
 {
-    bool fail = false;
+    if (!isValid(grid, grid_position))
+    {
+        return;
+    }
+    int total_added_points = 0;
+
+    // -- Actually Place the blocks -- //
+    for (int x = 0; x < grid->size.x; x++)
+    {
+        for (int y = 0; y < grid->size.y; y++)
+        {
+            if (grid->state[x][y] == BlockState::EMPTY)
+            {
+                continue;
+            }
+
+            int final_x = x + grid_position.x;
+            int final_y = y + grid_position.y;
+
+            main_grid->state[final_x][final_y] = grid->state[x][y];
+            total_added_points += 10;
+        }
+    }
+
+    // -- Detect & Clear any needed columns & rows -- //
+    std::vector<int> columns_to_clear;
+    std::vector<int> rows_to_clear;
+
+    // 1. Detect full columns
+    for (int x = 0; x < main_grid->size.x; ++x)
+    {
+        bool col_full = true;
+        for (int y = 0; y < main_grid->size.y; ++y)
+        {
+            if (main_grid->state[x][y] == BlockState::EMPTY)
+            {
+                col_full = false;
+                break;
+            }
+        }
+        if (col_full)
+            columns_to_clear.push_back(x);
+    }
+
+    for (int y = 0; y < main_grid->size.y; ++y)
+    {
+        bool row_full = true;
+        for (int x = 0; x < main_grid->size.x; ++x)
+        {
+            if (main_grid->state[x][y] == BlockState::EMPTY)
+            {
+                row_full = false;
+                break;
+            }
+        }
+        if (row_full)
+            rows_to_clear.push_back(y);
+    }
+
+    for (int x : columns_to_clear)
+    {
+        for (int y = 0; y < main_grid->size.y; ++y) {
+            if(main_grid->state[x][y] == BlockState::EMPTY) {
+                total_added_points += 50;
+            }
+            main_grid->state[x][y] = BlockState::EMPTY;
+        }
+    }
+
+    for (int y : rows_to_clear)
+    {
+        for (int x = 0; x < main_grid->size.x; ++x)
+            main_grid->state[x][y] = BlockState::EMPTY;
+    }
+
+    total_added_points += columns_to_clear.size() * 25 + rows_to_clear.size() * 25; 
+
+
+
+    // -- Maybe a losing Condition -- //
+    previews[selector->selected]->visible = false;
+    int avaliable_previews = 0;
+    for (int i = 0; i < 3; i++)
+    {
+        if (previews[i]->visible)
+        {
+            avaliable_previews++;
+        }
+    }
+
+    // -- Select a new preview -- //
+
+    if (avaliable_previews == 0)
+    {
+        refresh_pieces(true);
+    }
+    else
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            if (previews[i]->visible)
+            {
+                selector->select(i);
+            }
+        }
+    }
+
+    bool can_place_any = false;
+    for (int i = 0; i < 3; i++)
+    {
+        if (!previews[i]->visible)
+            continue;
+
+        for (int x = 0; x < main_grid->size.x; x++)
+        {
+            for (int y = 0; y < main_grid->size.y; y++)
+            {
+                if (isValid(previews[i], {x, y}))
+                {
+                    can_place_any = true;
+                    break;
+                }
+            }
+            if (can_place_any)
+                break;
+        }
+        if (can_place_any)
+            break;
+    }
+
+    set_score(total_added_points + points);
+
+    if (!can_place_any)
+    {
+        // Trigger losing condition
+        onGameOver();
+        return;
+    }
+}
+
+bool GameLogic::isValid(BlockGrid *grid, Vector2i grid_position)
+{
     for (int x = 0; x < grid->size.x; x++)
     {
         for (int y = 0; y < grid->size.y; y++)
@@ -229,107 +405,50 @@ void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
             int final_x = x + grid_position.x;
             if (final_x < 0 || final_x >= main_grid->size.x)
             {
-                fail = true;
-                break;
+                return false;
             }
             int final_y = y + grid_position.y;
             if (final_y < 0 || final_y >= main_grid->size.y)
             {
-                fail = true;
-                break;
+                return false;
             }
 
             if (main_grid->state[final_x][final_y] != BlockState::EMPTY)
             {
-                fail = true;
-                break;
+                return false;
             }
         }
     }
+    return true;
+}
 
-    if (!fail)
-    {
-        for (int x = 0; x < grid->size.x; x++)
-        {
-            for (int y = 0; y < grid->size.y; y++)
-            {
-                if (grid->state[x][y] == BlockState::EMPTY)
-                {
-                    continue;
-                }
+void GameLogic::onGameOver()
+{
+    lose_screen->visible = true;
+    is_game_over = true;
+    main_grid->clear();
 
-                int final_x = x + grid_position.x;
-                int final_y = y + grid_position.y;
-
-                main_grid->state[final_x][final_y] = grid->state[x][y];
-            }
-        }
-
-        // Check for vertical and horizontal rows to remove – simultaneously
-        std::vector<int> columns_to_clear;
-        std::vector<int> rows_to_clear;
-
-        // 1. Detect full columns
-        for (int x = 0; x < main_grid->size.x; ++x)
-        {
-            bool col_full = true;
-            for (int y = 0; y < main_grid->size.y; ++y)
-            {
-                if (main_grid->state[x][y] == BlockState::EMPTY)
-                {
-                    col_full = false;
-                    break;
-                }
-            }
-            if (col_full)
-                columns_to_clear.push_back(x);
-        }
-
-        // 2. Detect full rows
-        for (int y = 0; y < main_grid->size.y; ++y)
-        {
-            bool row_full = true;
-            for (int x = 0; x < main_grid->size.x; ++x)
-            {
-                if (main_grid->state[x][y] == BlockState::EMPTY)
-                {
-                    row_full = false;
-                    break;
-                }
-            }
-            if (row_full)
-                rows_to_clear.push_back(y);
-        }
-
-        // 3. Clear all marked columns
-        for (int x : columns_to_clear)
-        {
-            for (int y = 0; y < main_grid->size.y; ++y)
-                main_grid->state[x][y] = BlockState::EMPTY;
-        }
-
-        // 4. Clear all marked rows
-        for (int y : rows_to_clear)
-        {
-            for (int x = 0; x < main_grid->size.x; ++x)
-                main_grid->state[x][y] = BlockState::EMPTY;
-        }
-
-        previews[selector->selected]->visible = false;
-
-        bool was_able_to_select = false;
-        for (int i = 0; i < 3; i++)
-        {
-            if (previews[i]->visible)
-            {
-                was_able_to_select = true;
-                selector->select(i);
-            }
-        }
-
-        if (!was_able_to_select)
-        {
-            refresh_pieces(true);
-        }
+    cursor->transform->localPosition = {192/2, 192/2};
+    if(points > high_score) {
+        set_high_score(points);
     }
+}
+
+void GameLogic::set_high_score(uint32_t hs)
+{
+    high_score = hs;
+
+    save_buffer_1[1] = (hs >> 24) & 0xFF;
+    save_buffer_1[2] = (hs >> 16) & 0xFF;
+    save_buffer_1[3] = (hs >> 8) & 0xFF;
+    save_buffer_1[4] = hs & 0xFF;
+
+    eeprom_write(0, save_buffer_1);
+    high_score_renderer->text = std::to_string(hs);
+}
+
+void GameLogic::set_score(uint32_t score) {
+    points = score;
+
+    points_renderer->text = std::to_string(score);
 }

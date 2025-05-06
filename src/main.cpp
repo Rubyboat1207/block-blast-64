@@ -18,6 +18,12 @@ int main(void)
     GameObjects::GameManager* gm = new GameObjects::GameManager();
     init_main_scene(gm);
     graphics_set_color(0x000000, 0xFFFFFFFF);
+    assert(eeprom_present() == 1);
+    rdpq_font_t *font = rdpq_font_load_builtin(FONT_BUILTIN_DEBUG_MONO);
+    rdpq_text_register_font(
+        1,		// Font ID to set it to
+        font	// Font pointer
+    );
     while(1) {
         surface_t* disp = display_get();
         gm->display = disp;
