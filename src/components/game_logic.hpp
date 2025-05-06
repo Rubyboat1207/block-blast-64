@@ -5,7 +5,20 @@
 #include "selector.hpp"
 #include "cursor.hpp"
 #include <utility>
+#include <map>
+#include <array>
 
+enum class PieceType {
+    BIG_L,
+    LITTLE_L,
+    SQUARE,
+    LINE,
+    SINGLE,
+    DIAGONAL,
+    BIG_SQUARE,
+    DUO,
+    Last
+};
 
 
 COMPONENT(GameLogic)
@@ -19,6 +32,7 @@ COMPONENT(GameLogic)
     void update(float dt) override;
     void set_preview(int index);
     std::pair< int, Vector2i* > get_next_piece();
+    std::map<PieceType, int> pieces_since{};
     void on_selector_update(int selectedIndex);
     void refresh_pieces(bool reselect);
     void place(BlockGrid* grid, Vector2i grid_position);

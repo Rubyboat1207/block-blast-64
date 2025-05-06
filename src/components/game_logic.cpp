@@ -120,52 +120,49 @@ static void rotate_piece(const Vector2i *src, int count, Vector2i *dst, int rota
     }
 }
 
-// ────────────────────────────────────────────────────────────────────────────────
-// Randomly returns one of the four pieces, rotated 0–270°.
+#define PIECE_CASE(p, size) case(PieceType::p): base = p; count = size; break;
+
+#define ADD_PIECE(p) allowed_types[allowed_count++] = p;
+#define ADD_PIECE_AFTER_COUNT(p, count) if(pieces_since[p] > count) { ADD_PIECE(p) }
+#define ADD_PIECE_UNIQUE_TO_SET(p) ADD_PIECE_AFTER_COUNT(p, 3)
+
 std::pair<int, Vector2i *> GameLogic::get_next_piece()
 {
     static Vector2i rotated[9]; // largest piece size is 9 cells
     const Vector2i *base = nullptr;
+    std::array<PieceType, static_cast<int>(PieceType::Last)> allowed_types{};
+    int allowed_count = 0;
+    
+    ADD_PIECE_UNIQUE_TO_SET(PieceType::BIG_L)
+    ADD_PIECE_AFTER_COUNT(PieceType::BIG_SQUARE, 6)
+    ADD_PIECE(PieceType::DIAGONAL)
+    ADD_PIECE_AFTER_COUNT(PieceType::DUO, 1)
+    ADD_PIECE(PieceType::LINE)
+    ADD_PIECE_AFTER_COUNT(PieceType::LITTLE_L, 2)
+    ADD_PIECE_AFTER_COUNT(PieceType::SINGLE, 4)
+    ADD_PIECE(PieceType::SQUARE)
+
+    PieceType piece_type = allowed_types[(random_u32() + framesActive) % allowed_count];
+    Vector2i* piece = nullptr;
     int count = 0;
 
-    switch (piece++)
-    {
-    case 0:
-        base = BIG_L;
-        count = 4;
-        break;
-    case 1:
-        base = SQUARE;
-        count = 4;
-        break;
-    case 2:
-        base = LITTLE_L;
-        count = 3;
-        break;
-    case 3:
-        base = LINE;
-        count = 3;
-        break;
-    case 4:
-        base = SINGLE;
-        count = 1;
-        break;
-    case 5:
-        base = DIAGONAL;
-        count = 2;
-        break;
-    case 6:
-        base = BIG_SQUARE;
-        count = 9;
-        break;
-    case 7:
-        base = DUO;
-        count = 2;
-        piece = 0;
-        break;
-    default:
-        __builtin_trap(); // force crash if wrong
+    switch(piece_type) {
+        PIECE_CASE(BIG_L, 4)
+        PIECE_CASE(LITTLE_L, 3)
+        PIECE_CASE(SQUARE, 4)
+        PIECE_CASE(LINE, 3)
+        PIECE_CASE(SINGLE, 1)
+        PIECE_CASE(DIAGONAL, 2)
+        PIECE_CASE(BIG_SQUARE, 9)
+        PIECE_CASE(DUO, 2)
+        default: assert(false);
     }
+
+    for(int i = 0; i < (int) PieceType::Last; i++) {
+        pieces_since[(PieceType) i]++;
+    }
+    pieces_since[piece_type] = 0;
+    
 
     int rotations = random_u32() & 3; // 0,1,2,3 quarter‑turns
     rotate_piece(base, count, rotated, rotations);
