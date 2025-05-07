@@ -17,7 +17,7 @@ int main(void)
     console_set_debug(true);
     GameObjects::GameManager* gm = new GameObjects::GameManager();
     init_main_scene(gm);
-    graphics_set_color(0x000000, 0xFFFFFFFF);
+    // graphics_set_color(0x000000, 0xFFFFFFFF);
     assert(eeprom_present() == 1);
     rdpq_font_t *font = rdpq_font_load_builtin(FONT_BUILTIN_DEBUG_MONO);
     rdpq_text_register_font(
@@ -29,8 +29,8 @@ int main(void)
         gm->display = disp;
        
         /*Fill the screen */
-        graphics_fill_screen( disp, 0xFFFFFFFF );
         rdpq_attach( disp, NULL );
+        rdpq_clear(RGBA32(255, 255, 255, 255));
 
         gm->update();
 
