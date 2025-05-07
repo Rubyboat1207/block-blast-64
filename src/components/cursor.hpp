@@ -2,6 +2,7 @@
 #include "../gameobject.hpp"
 #include "transform.hpp"
 #include "block_grid.hpp"
+#include "sprite_renderer.hpp"
 
 
 
@@ -21,6 +22,7 @@ COMPONENT(Cursor)
     void update(float dt) override;
     void update_collision();
     Vector2i get_closest_grid_space(BlockGrid* grid) const;
+    SpriteRenderer* handRenderer;
     void update_preview_grid(Vector2i* pos);
     ~Cursor() {}
 COMPONENT_END()

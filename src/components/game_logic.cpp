@@ -38,14 +38,19 @@ void GameLogic::update(float dt)
         refresh_pieces(false);
     }
 
-    if (is_game_over)
+    if (is_game_over && can_reset)
     {
         if (gameObject->gameManager->controllerState.c->start)
         {
+            main_grid->clear();
             refresh_pieces(false);
             lose_screen->visible = false;
             is_game_over = false;
             set_score(0);
+            cursor->display_grid->visible = true;
+            cursor->preview_grid->visible = true;
+            cursor->handRenderer->visible = true;
+            main_grid->alpha = 255;
         }
     }
 }
@@ -448,16 +453,26 @@ bool GameLogic::isValid(BlockGrid *grid, Vector2i grid_position)
     return true;
 }
 
+void timer_timeout(int ovfl) {
+    rootGameLogic->reset_timer_timeout();
+}
+
 void GameLogic::onGameOver()
 {
-    lose_screen->visible = true;
+    // lose_screen->visible = true;
+    can_reset = false;
     is_game_over = true;
-    main_grid->clear();
 
     cursor->transform->localPosition = {192/2, 192/2};
     if(points > high_score) {
         set_high_score(points);
     }
+    cursor->display_grid->visible = false;
+    cursor->preview_grid->visible = false;
+    cursor->handRenderer->visible = false;
+
+    reset_progress = 0;
+    reset_timer = new_timer(TIMER_TICKS(250 * 1000), TF_CONTINUOUS, timer_timeout);
 }
 
 void GameLogic::set_high_score(uint32_t hs)
@@ -477,4 +492,28 @@ void GameLogic::set_score(uint32_t score) {
     points = score;
 
     points_renderer->text = std::to_string(score);
+}
+
+void GameLogic::reset_timer_timeout()
+{
+    for(int x = 0; x < main_grid->size.x; x++) {
+        if(main_grid->state[x][reset_progress] == BlockState::EMPTY) {
+            switch(random_u32() % 4) {
+                case(0): main_grid->state[x][reset_progress] = BlockState::BLUE; break;
+                case(1): main_grid->state[x][reset_progress] = BlockState::PURPLE; break;
+                case(2): main_grid->state[x][reset_progress] = BlockState::RED; break;
+                case(3): main_grid->state[x][reset_progress] = BlockState::YELLOW; break;
+            }
+        }else {
+            main_grid->state[x][reset_progress] = BlockState::GRAY;
+        }
+    }
+    main_grid->alpha = (uint8_t) (main_grid->alpha * 0.97f);
+    if(++reset_progress >= main_grid->size.y) {
+        can_reset = true;
+        delete_timer(reset_timer);
+        reset_timer = nullptr;
+        lose_screen->visible = true;
+        return;
+    }
 }

@@ -24,6 +24,7 @@ int main(void)
         1,		// Font ID to set it to
         font	// Font pointer
     );
+    timer_init();
     while(1) {
         surface_t* disp = display_get();
         gm->display = disp;

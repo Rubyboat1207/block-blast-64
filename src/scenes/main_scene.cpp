@@ -115,6 +115,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
         hand->addComponent(sr);
         hand->addComponent(transform);
         c->hand = transform;
+        c->handRenderer = sr;
     }
     GameObjects::GameObject* lose_screen = new GameObjects::GameObject();
     {
@@ -124,6 +125,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
         auto sr = new SpriteRenderer();
         sr->setSprite("rom:/lose_screen.sprite");
         sr->visible = false;
+        sr->useTransparency = true;
 
         lose_screen->addComponent(transform);
         lose_screen->addComponent(sr);

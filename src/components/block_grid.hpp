@@ -8,6 +8,7 @@ enum class BlockState {
     PURPLE,
     BLUE,
     YELLOW,
+    GRAY
 };
 
 

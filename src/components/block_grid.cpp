@@ -39,12 +39,13 @@ void BlockGrid::render() {
                 switch (b_state) {
                     case(BlockState::EMPTY): {
                         sprite = empty_sprite;
-                        rdpq_set_prim_color(RGBA32(255,255,255,alpha));
+                        rdpq_set_prim_color(RGBA32(255,255,255,255));
                     }break;
-                    case(BlockState::BLUE): rdpq_set_prim_color(RGBA32(32, 134, 230,alpha)); break;
-                    case(BlockState::PURPLE): rdpq_set_prim_color(RGBA32(143, 74, 212,alpha)); break;
-                    case(BlockState::RED): rdpq_set_prim_color(RGBA32(255, 94, 94,alpha)); break;
-                    case(BlockState::YELLOW): rdpq_set_prim_color(RGBA32(252, 223, 3,alpha)); break;
+                    case(BlockState::BLUE): rdpq_set_prim_color(RGBA32(32, 134, 230,255)); break;
+                    case(BlockState::PURPLE): rdpq_set_prim_color(RGBA32(143, 74, 212,255)); break;
+                    case(BlockState::RED): rdpq_set_prim_color(RGBA32(255, 94, 94,255)); break;
+                    case(BlockState::YELLOW): rdpq_set_prim_color(RGBA32(252, 223, 3,255)); break;
+                    case(BlockState::GRAY): rdpq_set_prim_color(RGBA32(64, 64, 64, 255)); break;
                 }
             }else {
                 rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
@@ -58,6 +59,7 @@ void BlockGrid::render() {
                     case(BlockState::PURPLE): rdpq_set_prim_color(RGBA32(143, 74, 212,alpha)); rdpq_set_fog_color(RGBA32(143, 74, 212, alpha)); break;
                     case(BlockState::RED): rdpq_set_prim_color(RGBA32(255, 94, 94,alpha)); rdpq_set_fog_color(RGBA32(255, 94, 94, alpha)); break;
                     case(BlockState::YELLOW): rdpq_set_prim_color(RGBA32(252, 223, 3,alpha)); rdpq_set_fog_color(RGBA32(252, 223, 3, alpha)); break;
+                    case(BlockState::GRAY): rdpq_set_prim_color(RGBA32(64, 64, 64, alpha)); rdpq_set_fog_color(RGBA32(64, 64, 64, alpha)); break;
                 }
             }
 

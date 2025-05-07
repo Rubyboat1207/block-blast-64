@@ -31,32 +31,49 @@ enum class PieceType {
 
 
 COMPONENT(GameLogic)
-    bool is_game_over;
-    BlockGrid* previews[3];
-    BlockGrid* main_grid;
-    Selector* selector;
-    Cursor* cursor;
-    Vector2f velocity{0,0};
+    // Game Over
+    bool is_game_over = false;
     SpriteRenderer* lose_screen;
+    void onGameOver();
+
+
+    // Reset Animation
+    bool can_reset = false;
+    timer_link_t* reset_timer;
+    void reset_timer_timeout();
+    int reset_progress = 0;
+
+
+    // Scores
     TextRenderer* points_renderer;
     TextRenderer* high_score_renderer;
     uint32_t points = 0;
     uint32_t high_score = 0;
+    void set_high_score(uint32_t hs);
+    void set_score(uint32_t score);
     uint8_t* save_buffer_1 = nullptr;
     int lines_scored_last = 0;
-    int piece = 0;
-    void ready() override;
-    void update(float dt) override;
+
+
+    // Selectables
+    BlockGrid* previews[3];
+    Selector* selector;
+    void refresh_pieces(bool reselect);
+    void on_selector_update(int selectedIndex);
     void set_preview(int index);
     std::pair< int, Vector2i* > get_next_piece();
     std::map<PieceType, int> pieces_since{};
-    void on_selector_update(int selectedIndex);
-    void refresh_pieces(bool reselect);
+
+
+    // Cursor/Grid
+    Cursor* cursor;
+    BlockGrid* main_grid;
     void place(BlockGrid* grid, Vector2i grid_position);
     bool isValid(BlockGrid* grid, Vector2i grid_position);
-    void onGameOver();
-    void set_high_score(uint32_t hs);
-    void set_score(uint32_t score);
+    
+    void ready() override;
+    void update(float dt) override;
+
     ~GameLogic() {}
     GameLogic();
 COMPONENT_END()
