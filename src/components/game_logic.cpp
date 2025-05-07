@@ -104,6 +104,20 @@ static Vector2i DUO[]{
     {0, 0},
     {0, 1},
 };
+static Vector2i T_BLOCK[]{
+    {0, 0},
+    {1, 0},
+    {2, 0},
+    {1, 1},
+};
+static Vector2i SIX_BLOCK[]{
+    {0, 0},
+    {1, 0},
+    {2, 0},
+    {0, 1},
+    {1, 1},
+    {2, 1},
+};
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Simple xorshift random generator (no srand needed).
@@ -175,8 +189,11 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
     ADD_PIECE_AFTER_COUNT(PieceType::LITTLE_L, 2)
     ADD_PIECE_AFTER_COUNT(PieceType::SINGLE, 4)
     ADD_PIECE(PieceType::SQUARE)
+    ADD_PIECE_AFTER_COUNT(PieceType::T_BLOCK, 2)
+    ADD_PIECE_AFTER_COUNT(PieceType::SIX_BLOCK, 4)
 
-    PieceType piece_type = allowed_types[(random_u32() + framesActive) % allowed_count];
+
+    PieceType piece_type = allowed_types[(random_u32() + framesActive + (uint8_t) display_get_fps()) % allowed_count];
     int count = 0;
 
     switch (piece_type)
@@ -189,6 +206,8 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
         PIECE_CASE(DIAGONAL, 2)
         PIECE_CASE(BIG_SQUARE, 9)
         PIECE_CASE(DUO, 2)
+        PIECE_CASE(T_BLOCK, 4)
+        PIECE_CASE(SIX_BLOCK, 6)
     default:
         assert(false);
     }
@@ -326,9 +345,16 @@ void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
             main_grid->state[x][y] = BlockState::EMPTY;
     }
 
-    total_added_points += columns_to_clear.size() * 25 + rows_to_clear.size() * 25; 
+    int lines_scored = rows_to_clear.size() + columns_to_clear.size();
 
+    if(lines_scored > 0) {
+        total_added_points += pow(2, lines_scored) * 25;
+    }
 
+    if(columns_to_clear.size() > 0 || rows_to_clear.size() > 0) {
+        total_added_points += lines_scored_last + lines_scored * 15;
+    }
+    lines_scored_last = lines_scored;
 
     // -- Maybe a losing Condition -- //
     previews[selector->selected]->visible = false;

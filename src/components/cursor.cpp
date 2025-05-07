@@ -36,20 +36,16 @@ void Cursor::update(float dt) {
         rootGameLogic->on_selector_update(0);
     }
     auto grid_pos = get_closest_grid_space(rootGameLogic->main_grid);
-    if(framesActive > 2) {
-
-        update_preview_grid(&grid_pos);
-    }
-    last_grid_pos = grid_pos;
-
-
-    
-
 
     if(cs.A && !was_a_pressed) {
         // place
         rootGameLogic->place(display_grid, grid_pos);
     }
+
+    if(framesActive > 2) {
+        update_preview_grid(&grid_pos);
+    }
+    last_grid_pos = grid_pos;
 
     was_a_pressed = cs.A;
 }

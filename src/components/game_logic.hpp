@@ -19,7 +19,14 @@ enum class PieceType {
     DIAGONAL,
     BIG_SQUARE,
     DUO,
-    Last
+    T_BLOCK,
+    SIX_BLOCK,
+
+
+
+
+    // do not add anything after this
+    Last,
 };
 
 
@@ -35,7 +42,8 @@ COMPONENT(GameLogic)
     TextRenderer* high_score_renderer;
     uint32_t points = 0;
     uint32_t high_score = 0;
-    uint8_t* save_buffer_1;
+    uint8_t* save_buffer_1 = nullptr;
+    int lines_scored_last = 0;
     int piece = 0;
     void ready() override;
     void update(float dt) override;
