@@ -11,6 +11,7 @@ private:
     Transform* transform;
 public:
     bool useTransparency = false;
+    rdpq_blitparms_t * rdpq_blitparams = NULL;
     bool visible = true;
     void render() override;
     void ready() override;

@@ -5,6 +5,7 @@
 #include "block_grid.hpp"
 #include "selector.hpp"
 #include "text_renderer.hpp"
+#include "clear_anim_manager.hpp"
 #include "cursor.hpp"
 #include <utility>
 #include <map>
@@ -36,13 +37,11 @@ COMPONENT(GameLogic)
     SpriteRenderer* lose_screen;
     void onGameOver();
 
-
     // Reset Animation
     bool can_reset = false;
     timer_link_t* reset_timer;
     void reset_timer_timeout();
     int reset_progress = 0;
-
 
     // Scores
     TextRenderer* points_renderer;
@@ -53,6 +52,7 @@ COMPONENT(GameLogic)
     void set_score(uint32_t score);
     uint8_t* save_buffer_1 = nullptr;
     int lines_scored_last = 0;
+    ClearAnimationManager* clear_anim_manager;
 
 
     // Selectables

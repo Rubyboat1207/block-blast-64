@@ -7,6 +7,7 @@
 #include "../components/cursor.hpp"
 #include "../components/game_logic.hpp"
 #include "../components/text_renderer.hpp"
+#include "../components/clear_anim_manager.hpp"
 
 
 void init_main_scene(GameObjects::GameManager* gm) {
@@ -158,6 +159,14 @@ void init_main_scene(GameObjects::GameManager* gm) {
 
         gl->high_score_renderer = textRenderer;
     }
+    GameObjects::GameObject* clear_animation_manager = new GameObjects::GameObject();
+    {
+        auto cam = new ClearAnimationManager();
+
+        high_score->addComponent(cam);
+
+        gl->clear_anim_manager = cam;
+    }
 
     
 
@@ -175,6 +184,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     background->addChild(lose_screen);
     background->addChild(points);
     background->addChild(high_score);
+    background->addChild(clear_animation_manager);
 
     for(int i = 0; i < 3; i++) {
         GameObjects::GameObject* previewContainer = new GameObjects::GameObject();

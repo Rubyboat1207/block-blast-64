@@ -350,7 +350,32 @@ void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
             main_grid->state[x][y] = BlockState::EMPTY;
     }
 
-    int lines_scored = rows_to_clear.size() + columns_to_clear.size();
+    size_t lines_scored = rows_to_clear.size() + columns_to_clear.size();
+
+    if(lines_scored > 0) {
+        size_t v_anims = 0;
+        size_t h_anims = 0;
+        for(int i = 0; i < CLEAR_ANIM_MAX_COUNT_ACTIVE; i++) {
+            if(clear_anim_manager->clear_animations[i] != nullptr) {
+                continue;
+            }
+
+            if(h_anims < rows_to_clear.size()) {
+                clear_anim_manager->clear_animations[i] = new ClearAnimation(rows_to_clear[h_anims], false);
+                h_anims++;
+                continue;
+            }
+            if(v_anims < columns_to_clear.size()) {
+                clear_anim_manager->clear_animations[i] = new ClearAnimation(columns_to_clear[v_anims], true);
+                v_anims++;
+                continue;
+            }
+            if(v_anims + h_anims == lines_scored) {
+                break;
+            }
+        } 
+    }
+    
 
     if(lines_scored > 0) {
         total_added_points += pow(2, lines_scored) * 25;

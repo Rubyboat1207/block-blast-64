@@ -21,14 +21,14 @@ void SpriteRenderer::render() {
         rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
         rdpq_set_prim_color(RGBA32(255,255,255,255));
         rdpq_mode_alphacompare(1);
-        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, NULL);
+        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, rdpq_blitparams);
     }else {
         rdpq_set_mode_copy(false);
         rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
         rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
         rdpq_set_prim_color(RGBA32(255,255,255,255));
         rdpq_mode_alphacompare(0);
-        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, NULL);
+        rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, rdpq_blitparams);
     }
 }
 
