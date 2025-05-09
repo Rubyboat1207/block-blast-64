@@ -8,9 +8,15 @@
 #include "../components/game_logic.hpp"
 #include "../components/text_renderer.hpp"
 #include "../components/clear_anim_manager.hpp"
+#include "../save_manager.hpp"
 
 
 void init_main_scene(GameObjects::GameManager* gm) {
+    if(save_manager == nullptr) {
+        save_manager = new SaveManager();
+        save_manager->load();
+    }
+
     GameObjects::GameObject* gameLogic = new GameObjects::GameObject();
     auto gl = new GameLogic();
     gameLogic->addComponent(gl);
@@ -172,6 +178,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
 
 
     gm->activeObjects.insert(background);
+    gm->setRoot(background);
     background->gameManager = gm;
 
     background->addChild(gameLogic);

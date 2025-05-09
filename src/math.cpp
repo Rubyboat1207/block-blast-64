@@ -40,3 +40,6 @@ uint32_t random_u32()
     rng_state = x;
     return x;
 }
+void set_rng_state(uint32_t state) {
+    rng_state = state;
+}

@@ -29,6 +29,9 @@ namespace GameObjects {
      * @brief Handles game object management
      */
     struct GameManager {
+        private:
+        GameObject* root;
+        public:
         std::set<GameObject*> activeObjects = {};
         std::set<GameObject*> freeQueue = {};
         controller_data controllerState;
@@ -48,7 +51,7 @@ namespace GameObjects {
          */
         void update();
         
-        void setRoot();
+        void setRoot(GameObject* gameObject);
     };
 
     /**
@@ -56,7 +59,7 @@ namespace GameObjects {
      */
     struct Component {
         // Frames active
-        int framesActive = 0;
+        uint64_t framesActive = 0;
 
         // Game object parent
         GameObject* gameObject;

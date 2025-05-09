@@ -4,36 +4,16 @@
 #include <climits>
 #include <vector>
 #include <string>
+#include "../save_manager.hpp"
 
 GameLogic *rootGameLogic = nullptr;
 
 void GameLogic::ready()
 {
-    save_buffer_1 = new uint8_t[8];
-
-    eeprom_read(0, save_buffer_1);
-    if(save_buffer_1[0] == 0x02) {
-        high_score = 0;
-
-        high_score |= save_buffer_1[1] << 24;
-        high_score |= save_buffer_1[2] << 16;
-        high_score |= save_buffer_1[3] << 8;
-        high_score |= save_buffer_1[4];
-
-        rng_state |= save_buffer_1[5] << 24;
-        rng_state |= save_buffer_1[6] << 16;
-        rng_state |= save_buffer_1[7] << 8;
-
-        high_score_renderer->text = std::to_string(high_score);
-    }else {
-        save_buffer_1[0] = 0x02;
-        for(int i = 1; i < 8; i++) {
-            save_buffer_1[i] = 0x00;
-        }
-    }
-
     wav64_open(&clear_sound, "rom:/audio/cleared_sound.wav64");
     wav64_open(&place_sound, "rom:/audio/place_blocks.wav64");
+
+    high_score_renderer->text = std::to_string(save_manager->high_score);
 }
 
 void GameLogic::update(float dt)
@@ -521,34 +501,27 @@ void GameLogic::onGameOver()
     is_game_over = true;
 
     cursor->transform->localPosition = {192/2, 192/2};
-    save_buffer_1[5] = (rng_state + framesActive >> 24) & 0xFF;
-    save_buffer_1[6] = (rng_state >> 16) & 0xFF;
-    save_buffer_1[7] = (rng_state + framesActive >> 8) & 0xFF;
-    // set_high_score ends up saving eeprom data, so no need to do it here
 
-    if(points > high_score) {
+    if(points > save_manager->high_score) {
         set_high_score(points);
+    }else {
+        // update rng state
+        save_manager->save();
     }
     cursor->display_grid->visible = false;
     cursor->preview_grid->visible = false;
     cursor->handRenderer->visible = false;
 
+
     reset_progress = 0;
     reset_timer = new_timer(TIMER_TICKS(250 * 1000), TF_CONTINUOUS, timer_timeout);
-
-    
 }
 
 void GameLogic::set_high_score(uint32_t hs)
 {
-    high_score = hs;
+    save_manager->high_score = hs;
+    save_manager->save();
 
-    save_buffer_1[1] = (hs >> 24) & 0xFF;
-    save_buffer_1[2] = (hs >> 16) & 0xFF;
-    save_buffer_1[3] = (hs >> 8) & 0xFF;
-    save_buffer_1[4] = hs & 0xFF;
-
-    eeprom_write(0, save_buffer_1);
     high_score_renderer->text = std::to_string(hs);
 }
 

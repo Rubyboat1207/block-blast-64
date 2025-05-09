@@ -49,10 +49,8 @@ COMPONENT(GameLogic)
     TextRenderer* points_renderer;
     TextRenderer* high_score_renderer;
     uint32_t points = 0;
-    uint32_t high_score = 0;
     void set_high_score(uint32_t hs);
     void set_score(uint32_t score);
-    uint8_t* save_buffer_1 = nullptr;
     int lines_scored_last = 0;
     ClearAnimationManager* clear_anim_manager;
     wav64_t clear_sound;

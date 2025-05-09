@@ -38,6 +38,12 @@ void GameObjects::GameObject::ready() {
 void GameObjects::GameObject::queueFree() {
     assert(gameManager != nullptr);
     gameManager->requestFree(this);
+    for (int i = 0; i < GAME_OBJECT_CHILD_LIMIT; i++) {
+        if (children[i] != nullptr) {
+            children[i]->queueFree();
+            children[i] = nullptr;
+        }
+    }
 }
 
 bool GameObjects::GameObject::addComponent(Component *component) {
@@ -170,6 +176,14 @@ void GameObjects::GameManager::update() {
     }
 
     freeQueue.clear();
+}
+
+void GameObjects::GameManager::setRoot(GameObject *gameObject)
+{
+    if(root != nullptr) {
+        root->queueFree();
+    }
+    root = gameObject;
 }
 
 // void GameObjects::GameManager::addManagedReference(GameObject *refering, GameObject *reference)

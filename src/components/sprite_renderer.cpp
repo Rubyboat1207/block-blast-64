@@ -16,17 +16,26 @@ void SpriteRenderer::render() {
     #endif
 
     if(useTransparency) {
-        rdpq_set_mode_copy(true);
+        if(fastRender) {
+            rdpq_set_mode_copy(true);
+        }else {
+            rdpq_set_mode_standard();
+        }
         rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
         rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-        rdpq_set_prim_color(RGBA32(255,255,255,255));
+        rdpq_set_prim_color(tint);
+        rdpq_set_fog_color(tint);
         rdpq_mode_alphacompare(1);
         rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, rdpq_blitparams);
     }else {
-        rdpq_set_mode_copy(false);
+        if(fastRender) {
+            rdpq_set_mode_copy(false);
+        }else {
+            rdpq_set_mode_standard();
+        }
         rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
         rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-        rdpq_set_prim_color(RGBA32(255,255,255,255));
+        rdpq_set_prim_color(tint);
         rdpq_mode_alphacompare(0);
         rdpq_sprite_blit(sprite, globalPos.x, globalPos.y, rdpq_blitparams);
     }

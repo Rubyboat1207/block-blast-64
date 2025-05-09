@@ -63,3 +63,4 @@ constexpr float clamp(float value, float min, float max) {
 
 uint32_t random_u32();
 extern uint32_t rng_state;
+void set_rng_state(uint32_t state);

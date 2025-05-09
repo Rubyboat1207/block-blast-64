@@ -11,7 +11,9 @@ private:
     Transform* transform;
 public:
     bool useTransparency = false;
+    bool fastRender = true;
     rdpq_blitparms_t * rdpq_blitparams = NULL;
+    color_t tint{255,255,255,255};
     bool visible = true;
     void render() override;
     void ready() override;
