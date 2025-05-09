@@ -22,6 +22,8 @@ enum class PieceType {
     DUO,
     T_BLOCK,
     SIX_BLOCK,
+    INVERTED_L,
+    BIG_U,
 
 
 

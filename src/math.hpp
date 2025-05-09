@@ -60,3 +60,6 @@ struct Vector2f {
 constexpr float clamp(float value, float min, float max) {
     return (value < min) ? min : (value > max) ? max : value;
 }
+
+uint32_t random_u32();
+extern uint32_t rng_state;

@@ -19,6 +19,11 @@ void GameLogic::ready()
         high_score |= save_buffer_1[2] << 16;
         high_score |= save_buffer_1[3] << 8;
         high_score |= save_buffer_1[4];
+
+        rng_state |= save_buffer_1[5] << 24;
+        rng_state |= save_buffer_1[6] << 16;
+        rng_state |= save_buffer_1[7] << 8;
+
         high_score_renderer->text = std::to_string(high_score);
     }else {
         save_buffer_1[0] = 0x02;
@@ -124,20 +129,21 @@ static Vector2i SIX_BLOCK[]{
     {1, 1},
     {2, 1},
 };
-
-// ────────────────────────────────────────────────────────────────────────────────
-// Simple xorshift random generator (no srand needed).
-static uint32_t rng_state = 0x12345678; // arbitrary nonzero seed
-
-static uint32_t random_u32()
-{
-    uint32_t x = rng_state;
-    x ^= x << 13;
-    x ^= x >> 17;
-    x ^= x << 5;
-    rng_state = x;
-    return x;
-}
+static Vector2i INVERTED_L[]{
+    {1, 0},
+    {1, 1},
+    {1, 2},
+    {0, 2},
+};
+static Vector2i BIG_U[]{
+    {0, 0},
+    {2, 0},
+    {0, 1},
+    {2, 1},
+    {0, 2},
+    {1, 2},
+    {2, 2}
+};
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Helper: rotate an array of Vector2i “count” cells by 0–3 quarter‑turns.
@@ -179,6 +185,21 @@ static void rotate_piece(const Vector2i *src, int count, Vector2i *dst, int rota
         ADD_PIECE(p)                    \
     }
 #define ADD_PIECE_UNIQUE_TO_SET(p) ADD_PIECE_AFTER_COUNT(p, 3)
+#define ADD_PIECE_AFTER_COUNT_4(p, count, other_p, other_count)         \
+    if (pieces_since[p] > count &&                                      \
+        (pieces_since[other_p] > other_count))         \
+    {                                                                   \
+        ADD_PIECE(p)                                                    \
+    }
+#define ADD_PIECE_AFTER_COUNT_6(p, count, other_p, other_count, third_p, third_count) \
+    if (pieces_since[p] > count &&                                                   \
+        (pieces_since[other_p] > other_count) &&                    \
+        (pieces_since[third_p] > third_count))                      \
+    {                                                                                \
+        ADD_PIECE(p)                                                                 \
+    }
+
+
 
 std::pair<int, Vector2i *> GameLogic::get_next_piece()
 {
@@ -188,7 +209,8 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
     int allowed_count = 0;
 
     ADD_PIECE_UNIQUE_TO_SET(PieceType::BIG_L)
-    ADD_PIECE_AFTER_COUNT(PieceType::BIG_SQUARE, 6)
+    ADD_PIECE_UNIQUE_TO_SET(PieceType::INVERTED_L)
+    ADD_PIECE_AFTER_COUNT_4(PieceType::BIG_SQUARE, 6, PieceType::BIG_U, 3)
     ADD_PIECE(PieceType::DIAGONAL)
     ADD_PIECE_AFTER_COUNT(PieceType::DUO, 1)
     ADD_PIECE(PieceType::LINE)
@@ -197,6 +219,7 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
     ADD_PIECE(PieceType::SQUARE)
     ADD_PIECE_AFTER_COUNT(PieceType::T_BLOCK, 2)
     ADD_PIECE_AFTER_COUNT(PieceType::SIX_BLOCK, 4)
+    ADD_PIECE_AFTER_COUNT_4(PieceType::BIG_U, 5, PieceType::BIG_SQUARE, 3)
 
 
     PieceType piece_type = allowed_types[(random_u32() + framesActive + (uint8_t) display_get_fps()) % allowed_count];
@@ -214,6 +237,8 @@ std::pair<int, Vector2i *> GameLogic::get_next_piece()
         PIECE_CASE(DUO, 2)
         PIECE_CASE(T_BLOCK, 4)
         PIECE_CASE(SIX_BLOCK, 6)
+        PIECE_CASE(INVERTED_L, 4)
+        PIECE_CASE(BIG_U, 7)
     default:
         assert(false);
     }
@@ -496,6 +521,11 @@ void GameLogic::onGameOver()
     is_game_over = true;
 
     cursor->transform->localPosition = {192/2, 192/2};
+    save_buffer_1[5] = (rng_state + framesActive >> 24) & 0xFF;
+    save_buffer_1[6] = (rng_state >> 16) & 0xFF;
+    save_buffer_1[7] = (rng_state + framesActive >> 8) & 0xFF;
+    // set_high_score ends up saving eeprom data, so no need to do it here
+
     if(points > high_score) {
         set_high_score(points);
     }
@@ -505,6 +535,8 @@ void GameLogic::onGameOver()
 
     reset_progress = 0;
     reset_timer = new_timer(TIMER_TICKS(250 * 1000), TF_CONTINUOUS, timer_timeout);
+
+    
 }
 
 void GameLogic::set_high_score(uint32_t hs)
