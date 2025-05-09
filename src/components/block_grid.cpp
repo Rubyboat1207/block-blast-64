@@ -45,6 +45,8 @@ void BlockGrid::render() {
                     case(BlockState::PURPLE): rdpq_set_prim_color(BLOCKS_COLOR_PURPLE(255)); break;
                     case(BlockState::RED): rdpq_set_prim_color(BLOCKS_COLOR_RED(255)); break;
                     case(BlockState::YELLOW): rdpq_set_prim_color(BLOCKS_COLOR_YELLOW(255)); break;
+                    case(BlockState::GREEN): rdpq_set_prim_color(BLOCKS_COLOR_GREEN(255)); break;
+                    case(BlockState::ORANGE): rdpq_set_prim_color(BLOCKS_COLOR_ORANGE(255)); break;
                     case(BlockState::GRAY): rdpq_set_prim_color(BLOCKS_COLOR_GRAY(255)); break;
                 }
             }else {
@@ -59,6 +61,8 @@ void BlockGrid::render() {
                     case(BlockState::PURPLE): rdpq_set_prim_color(BLOCKS_COLOR_PURPLE(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_PURPLE(alpha)); break;
                     case(BlockState::RED): rdpq_set_prim_color(BLOCKS_COLOR_RED(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_RED(alpha)); break;
                     case(BlockState::YELLOW): rdpq_set_prim_color(BLOCKS_COLOR_YELLOW(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_YELLOW(alpha)); break;
+                    case(BlockState::GREEN): rdpq_set_prim_color(BLOCKS_COLOR_GREEN(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_GREEN(alpha)); break;
+                    case(BlockState::ORANGE): rdpq_set_prim_color(BLOCKS_COLOR_ORANGE(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_ORANGE(alpha)); break;
                     case(BlockState::GRAY): rdpq_set_prim_color(BLOCKS_COLOR_GRAY(alpha)); rdpq_set_fog_color(BLOCKS_COLOR_GRAY(alpha)); break;
                 }
             }

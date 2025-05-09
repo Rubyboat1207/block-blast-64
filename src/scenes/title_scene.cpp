@@ -47,10 +47,12 @@ void init_title_scene(GameObjects::GameManager *gm)
         auto sr = new SpriteRenderer();
         sr->useTransparency = true;
         sr->setSprite("rom:/title_l.sprite");
-        switch(random_u32() % 3) {
+        switch(random_u32() % 5) {
             case(0): sr->tint = BLOCKS_COLOR_PURPLE(255); break;
             case(1): sr->tint = BLOCKS_COLOR_RED(255); break;
             case(2): sr->tint = BLOCKS_COLOR_YELLOW(255); break;
+            case(3): sr->tint = BLOCKS_COLOR_GREEN(255); break;
+            case(4): sr->tint = BLOCKS_COLOR_ORANGE(255); break;
         }
         sr->fastRender = false;
 

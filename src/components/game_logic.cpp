@@ -239,7 +239,7 @@ void GameLogic::set_preview(int index)
 {
     previews[index]->clear();
     BlockState state = BlockState::EMPTY;
-    switch ((framesActive + index) % 4)
+    switch ((framesActive + index) % 6)
     {
     case (0):
         state = BlockState::BLUE;
@@ -251,6 +251,12 @@ void GameLogic::set_preview(int index)
         state = BlockState::PURPLE;
         break;
     case (3):
+        state = BlockState::ORANGE;
+        break;
+    case (4):
+        state = BlockState::GREEN;
+        break;
+    case (5):
         state = BlockState::YELLOW;
         break;
     }
@@ -540,11 +546,13 @@ void GameLogic::reset_timer_timeout()
     
     for(int x = 0; x < main_grid->size.x; x++) {
         if(main_grid->state[x][reset_progress] == BlockState::EMPTY) {
-            switch(random_u32() % 4) {
+            switch(random_u32() % 6) {
                 case(0): main_grid->state[x][reset_progress] = BlockState::BLUE; break;
                 case(1): main_grid->state[x][reset_progress] = BlockState::PURPLE; break;
                 case(2): main_grid->state[x][reset_progress] = BlockState::RED; break;
                 case(3): main_grid->state[x][reset_progress] = BlockState::YELLOW; break;
+                case(4): main_grid->state[x][reset_progress] = BlockState::GREEN; break;
+                case(5): main_grid->state[x][reset_progress] = BlockState::ORANGE; break;
             }
         }else {
             main_grid->state[x][reset_progress] = BlockState::GRAY;
