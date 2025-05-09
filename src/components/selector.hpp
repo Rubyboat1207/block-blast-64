@@ -5,6 +5,8 @@
 COMPONENT(Selector)
     Transform* transform;
     wav64_t select_sound;
+    uint8_t last_selected = 0;
+    bool c_right_pressed = false;
 
     int selected = 0;
     void ready() override;

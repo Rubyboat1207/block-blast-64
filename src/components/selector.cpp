@@ -29,6 +29,17 @@ void Selector::update(float dt)
             wav64_play(&select_sound, 1);
         }
     }
+    if(controller->C_right && !c_right_pressed) {
+        c_right_pressed = true;
+        if(select(last_selected)) {
+            mixer_ch_stop(1);
+            wav64_play(&select_sound, 1);
+        }
+    }
+
+    if(!controller->C_right) {
+        c_right_pressed = false;
+    }
 }
 
 bool Selector::select(int i)
@@ -45,6 +56,7 @@ bool Selector::select(int i)
         case(2): transform->localPosition.y = 173; break;
     }
     
+    last_selected = selected;
     selected = i;
     rootGameLogic->on_selector_update(selected);
     return true;

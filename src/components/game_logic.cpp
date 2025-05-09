@@ -518,6 +518,9 @@ void GameLogic::onGameOver()
     cursor->preview_grid->visible = false;
     cursor->handRenderer->visible = false;
 
+    for(const auto &pair : pieces_since) {
+        pieces_since[pair.first] = 0;
+    }
 
     reset_progress = 0;
     reset_timer = new_timer(TIMER_TICKS(250 * 1000), TF_CONTINUOUS, timer_timeout);
@@ -539,10 +542,8 @@ void GameLogic::set_score(uint32_t score) {
 
 void GameLogic::reset_timer_timeout()
 {
-    if(reset_progress % 2 == 0) {
-        mixer_ch_stop(2);
-        wav64_play(&place_sound, 2);
-    }
+    mixer_ch_stop(2);
+    wav64_play(&place_sound, 2);
     
     for(int x = 0; x < main_grid->size.x; x++) {
         if(main_grid->state[x][reset_progress] == BlockState::EMPTY) {
