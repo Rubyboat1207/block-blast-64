@@ -4,6 +4,7 @@
 void Selector::ready()
 {
     transform = gameObject->GET_COMPONENT(Transform);
+    wav64_open(&select_sound, "rom:/audio/selector_change.wav64");
 }
 
 void Selector::update(float dt)
@@ -11,23 +12,32 @@ void Selector::update(float dt)
     Component::update(dt);
     auto controller = gameObject->gameManager->controllerState.c;
     if(controller->C_up) {
-        select(0);
+        if(select(0)) {
+            mixer_ch_stop(1);
+            wav64_play(&select_sound, 1);
+        }
     }
     if(controller->C_left) {
-        select(1);
+        if(select(1)) {
+            mixer_ch_stop(1);
+            wav64_play(&select_sound, 1);
+        }
     }
     if(controller->C_down) {
-        select(2);
+        if(select(2)) {
+            mixer_ch_stop(1);
+            wav64_play(&select_sound, 1);
+        }
     }
 }
 
-void Selector::select(int i)
+bool Selector::select(int i)
 {
     if(i == selected) {
-        return;
+        return false;
     }
     if(!rootGameLogic->previews[i]->visible) {
-        return;
+        return false;
     }
     switch(i) {
         case(0): transform->localPosition.y = 41 ; break;
@@ -37,4 +47,5 @@ void Selector::select(int i)
     
     selected = i;
     rootGameLogic->on_selector_update(selected);
+    return true;
 }

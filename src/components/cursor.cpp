@@ -43,7 +43,7 @@ void Cursor::update(float dt) {
     }
 
     if(framesActive > 2) {
-        update_preview_grid(&grid_pos);
+        update_preview_grid(&grid_pos, false);
     }
     last_grid_pos = grid_pos;
 
@@ -92,7 +92,7 @@ Vector2i Cursor::get_closest_grid_space(BlockGrid* grid) const
     return { col, row };
 }
 
-void Cursor::update_preview_grid(Vector2i* pos) {
+void Cursor::update_preview_grid(Vector2i* pos, bool forceRefresh) {
     Vector2i grid_pos{};
     if(pos) {
         grid_pos = *pos;
@@ -100,7 +100,7 @@ void Cursor::update_preview_grid(Vector2i* pos) {
         grid_pos = get_closest_grid_space(preview_grid);
     }
     
-    if(grid_pos.x != last_grid_pos.x || grid_pos.y != last_grid_pos.y) {
+    if(grid_pos.x != last_grid_pos.x || grid_pos.y != last_grid_pos.y || forceRefresh) {
         preview_grid->clear();
         if(rootGameLogic->isValid(display_grid, grid_pos)) {
             for(int x = 0; x < display_grid->size.x; x++) {

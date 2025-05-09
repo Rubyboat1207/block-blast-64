@@ -53,6 +53,7 @@ COMPONENT(GameLogic)
     uint8_t* save_buffer_1 = nullptr;
     int lines_scored_last = 0;
     ClearAnimationManager* clear_anim_manager;
+    wav64_t clear_sound;
 
 
     // Selectables
@@ -68,6 +69,7 @@ COMPONENT(GameLogic)
     // Cursor/Grid
     Cursor* cursor;
     BlockGrid* main_grid;
+    wav64_t place_sound;
     void place(BlockGrid* grid, Vector2i grid_position);
     bool isValid(BlockGrid* grid, Vector2i grid_position);
     

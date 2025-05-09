@@ -12,13 +12,6 @@ void GameLogic::ready()
     save_buffer_1 = new uint8_t[8];
 
     eeprom_read(0, save_buffer_1);
-    if(save_buffer_1[0] == 0xFF) {
-        // This has not been read before. This means new save.
-        save_buffer_1[0] = 0x02;
-        for(int i = 1; i < 8; i++) {
-            save_buffer_1[i] = 0x00;
-        }
-    }
     if(save_buffer_1[0] == 0x02) {
         high_score = 0;
 
@@ -27,7 +20,15 @@ void GameLogic::ready()
         high_score |= save_buffer_1[3] << 8;
         high_score |= save_buffer_1[4];
         high_score_renderer->text = std::to_string(high_score);
+    }else {
+        save_buffer_1[0] = 0x02;
+        for(int i = 1; i < 8; i++) {
+            save_buffer_1[i] = 0x00;
+        }
     }
+
+    wav64_open(&clear_sound, "rom:/audio/cleared_sound.wav64");
+    wav64_open(&place_sound, "rom:/audio/place_blocks.wav64");
 }
 
 void GameLogic::update(float dt)
@@ -263,6 +264,7 @@ void GameLogic::set_preview(int index)
 
 void GameLogic::on_selector_update(int selectedIndex)
 {
+    cursor->preview_grid->clear();
     for (int x = 0; x < previews[selectedIndex]->size.x; x++)
     {
         for (int y = 0; y < previews[selectedIndex]->size.y; y++)
@@ -271,7 +273,7 @@ void GameLogic::on_selector_update(int selectedIndex)
         }
     }
     cursor->update_collision();
-    cursor->update_preview_grid(nullptr);
+    cursor->update_preview_grid(nullptr, true);
 }
 
 void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
@@ -373,8 +375,13 @@ void GameLogic::place(BlockGrid *grid, Vector2i grid_position)
             if(v_anims + h_anims == lines_scored) {
                 break;
             }
-        } 
+        }
+        mixer_ch_stop(0);
+        wav64_play(&clear_sound, 0);
     }
+
+    mixer_ch_stop(2);
+    wav64_play(&place_sound, 2);
     
 
     if(lines_scored > 0) {
@@ -521,6 +528,11 @@ void GameLogic::set_score(uint32_t score) {
 
 void GameLogic::reset_timer_timeout()
 {
+    if(reset_progress % 2 == 0) {
+        mixer_ch_stop(2);
+        wav64_play(&place_sound, 2);
+    }
+    
     for(int x = 0; x < main_grid->size.x; x++) {
         if(main_grid->state[x][reset_progress] == BlockState::EMPTY) {
             switch(random_u32() % 4) {

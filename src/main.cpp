@@ -24,6 +24,8 @@ int main(void)
         1,		// Font ID to set it to
         font	// Font pointer
     );
+    audio_init(44100, 4);
+    mixer_init(4);
     timer_init();
     while(1) {
         surface_t* disp = display_get();
@@ -34,6 +36,16 @@ int main(void)
         rdpq_clear(RGBA32(255, 255, 255, 255));
 
         gm->update();
+
+        if (audio_can_write()) {
+            // Select an audio buffer that we can write to
+            short *buf = audio_write_begin();
+            // Write to the audio buffer from the mixer
+            mixer_poll(buf, audio_get_buffer_length());
+            // Tell the audio system that the buffer has
+            // been filled and is ready for playback
+            audio_write_end();
+        }
 
         rdpq_detach_wait();
 

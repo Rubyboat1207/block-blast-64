@@ -29,7 +29,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     GameObjects::GameObject* selection = new GameObjects::GameObject();
     {
         auto transform = new Transform();
-        transform->localPosition = {31, 41};
+        transform->localPosition = {34, 41};
 
         SpriteRenderer* sr = new SpriteRenderer();
         sr->setSprite("rom:/selection.sprite");
@@ -136,7 +136,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     GameObjects::GameObject* points = new GameObjects::GameObject();
     {
         auto transform = new Transform();
-        transform->localPosition = {161, 22};
+        transform->localPosition = {161, 27};
         
         auto textRenderer = new TextRenderer();
         textRenderer->text = "0";
@@ -149,7 +149,7 @@ void init_main_scene(GameObjects::GameManager* gm) {
     GameObjects::GameObject* high_score = new GameObjects::GameObject();
     {
         auto transform = new Transform();
-        transform->localPosition = {31, 22};
+        transform->localPosition = {35, 28};
         
         auto textRenderer = new TextRenderer();
         textRenderer->text = "0";

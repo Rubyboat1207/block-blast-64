@@ -23,6 +23,6 @@ COMPONENT(Cursor)
     void update_collision();
     Vector2i get_closest_grid_space(BlockGrid* grid) const;
     SpriteRenderer* handRenderer;
-    void update_preview_grid(Vector2i* pos);
+    void update_preview_grid(Vector2i* pos, bool forceRefresh);
     ~Cursor() {}
 COMPONENT_END()
