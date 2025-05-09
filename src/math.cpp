@@ -1,28 +1,25 @@
+/**
+ * @file math.cpp
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * 
+ * Copyright (C) 2025 Rubyboat (owner of https://github.com/Rubyboat1207)
+ */
+
 #include "math.hpp"
 #include <math.h>
 #include <libdragon.h>
-
-void Vector2f::moveTowardsWithState(Vector2f to, float delta)
-{
-	Vector2f vd = to - this;
-	float len = vd.length();
-    if(len <= delta || len < 0.5f ) {
-        x = to.x;
-        y = to.y;
-        return;
-    }
-    Vector2f addened = vd / len * delta;
-    x += addened.x;
-    y += addened.y;
-}
-
-Vector2f Vector2f::vectorMovedTowards(Vector2f to, float delta)
-{
-    Vector2f v = *this;
-	Vector2f vd = to - v;
-	float len = vd.length();
-	return len <= delta || len < 0.5f ? to : v + vd / len * delta;
-}
 
 float Vector2f::length()
 {
