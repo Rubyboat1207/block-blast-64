@@ -515,13 +515,8 @@ bool GameLogic::isValid(BlockGrid *grid, Vector2i grid_position)
     return true;
 }
 
-void timer_timeout(int ovfl) {
-    rootGameLogic->reset_timer_timeout();
-}
-
 void GameLogic::onGameOver()
 {
-    // lose_screen->visible = true;
     can_reset = false;
     is_game_over = true;
 
@@ -530,7 +525,6 @@ void GameLogic::onGameOver()
     if(points > save_manager->high_score) {
         set_high_score(points);
     }else {
-        // update rng state
         save_manager->save();
     }
     cursor->display_grid->visible = false;
@@ -542,7 +536,7 @@ void GameLogic::onGameOver()
     }
 
     reset_progress = 0;
-    reset_timer = new_timer(TIMER_TICKS(250 * 1000), TF_CONTINUOUS, timer_timeout);
+    timer_manager->begin_timeout(0.25f);
 }
 
 void GameLogic::set_high_score(uint32_t hs)
@@ -559,7 +553,7 @@ void GameLogic::set_score(uint32_t score) {
     points_renderer->text = std::to_string(score);
 }
 
-void GameLogic::reset_timer_timeout()
+void GameLogic::on_timeout()
 {
     mixer_ch_stop(2);
     wav64_play(&place_sound, 2);
@@ -581,8 +575,7 @@ void GameLogic::reset_timer_timeout()
     main_grid->alpha = (uint8_t) (main_grid->alpha * 0.97f);
     if(++reset_progress >= main_grid->size.y) {
         can_reset = true;
-        delete_timer(reset_timer);
-        reset_timer = nullptr;
+        timer_manager->stop_timeout();
         lose_screen->visible = true;
         return;
     }

@@ -38,6 +38,11 @@ void init_main_scene(GameObjects::GameManager* gm) {
     GameObjects::GameObject* gameLogic = new GameObjects::GameObject();
     auto gl = new GameLogic();
     gameLogic->addComponent(gl);
+    {
+        auto timer = new TimerManager();
+        timer->bind_user(gl);
+        gl->timer_manager = timer;
+    }
 
     GameObjects::GameObject* background = new GameObjects::GameObject();
     {

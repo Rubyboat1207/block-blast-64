@@ -29,6 +29,7 @@
 #include <utility>
 #include <map>
 #include <array>
+#include "timer_manager.hpp"
 
 enum class PieceType {
     BIG_L,
@@ -52,7 +53,11 @@ enum class PieceType {
 };
 
 
-COMPONENT(GameLogic)
+struct GameLogic : public GameObjects::Component, TimerUser {
+    uint32_t getType() override {
+        return GameObjects::typeIdHasher("GameLogic");
+    }
+
     // Game Over
     bool is_game_over = false;
     SpriteRenderer* lose_screen;
@@ -60,8 +65,8 @@ COMPONENT(GameLogic)
 
     // Reset Animation
     bool can_reset = false;
-    timer_link_t* reset_timer;
-    void reset_timer_timeout();
+    TimerManager* timer_manager;
+    void on_timeout() override;
     int reset_progress = 0;
 
     // Scores
@@ -97,6 +102,6 @@ COMPONENT(GameLogic)
 
     ~GameLogic() {}
     GameLogic();
-COMPONENT_END()
+};
 
 extern GameLogic* rootGameLogic;
