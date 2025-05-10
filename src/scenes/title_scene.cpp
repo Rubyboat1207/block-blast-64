@@ -19,7 +19,6 @@
 
 #include "scenes.hpp"
 #include "../components/transform.hpp"
-#include "../components/circle_movement.hpp"
 #include "../components/sprite_renderer.hpp"
 #include "../components/selector.hpp"
 #include "../components/block_grid.hpp"
