@@ -56,9 +56,20 @@ void Cursor::update(float dt) {
     }
     auto grid_pos = get_closest_grid_space(rootGameLogic->main_grid);
 
-    if(cs.A && !was_a_pressed) {
+
+    // The goal here is to place the block after you release the A button
+    // as well as if you hold it for a while, you can let go but it wont place
+    // not sure if this makes sense ultimately, but i think it will prevent
+    // accidental placements
+    if(was_a_pressed && !cs.A && time_since_a_pressed < 3.0f) {
         // place
         rootGameLogic->place(display_grid, grid_pos);
+    }
+
+    if(cs.A) {
+        time_since_a_pressed += dt;
+    }else {
+        time_since_a_pressed = 0;
     }
 
     if(framesActive > 2) {

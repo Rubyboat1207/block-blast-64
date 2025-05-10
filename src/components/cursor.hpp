@@ -31,6 +31,7 @@ COMPONENT(Cursor)
     Vector2i last_grid_pos{};
     float speed = 300.0f;
     float acceleration = 1500.0f;
+    float time_since_a_pressed = 0.0f;
     Vector2f bounds;
     Vector2i collision;
     Transform* transform;
