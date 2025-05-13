@@ -7,7 +7,6 @@ WAV_FILES=$(wildcard $(AUDIO_DIR)/*.wav)
 XM_FILES=$(wildcard $(AUDIO_DIR)/*.xm)
 YM_FILES=$(wildcard $(AUDIO_DIR)/*.ym)
 AUDIO_FILES=$(WAV_FILES) $(XM_FILES) $(YM_FILES)
-CXXFLAGS += -Isrc
 
 AUDIO_OUTPUT_FILES=$(subst resources/audio,filesystem,$(WAV_FILES:.wav=.wav64) $(XM_FILES:.xm=.xm64) $(YM_FILES:.ym=.ym64))
 
