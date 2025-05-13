@@ -17,8 +17,8 @@
  * Copyright (C) 2025 Rubyboat (owner of https://github.com/Rubyboat1207)
  */
 
- #include "../gameobject.hpp"
-#include "transform.hpp"
+#pragma once
+#include "../engine/gameobject.hpp"
 
 COMPONENT(StartScreen)
 

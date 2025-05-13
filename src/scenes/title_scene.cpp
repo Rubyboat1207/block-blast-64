@@ -18,16 +18,12 @@
  */
 
 #include "scenes.hpp"
-#include "../components/transform.hpp"
-#include "../components/sprite_renderer.hpp"
-#include "../components/selector.hpp"
-#include "../components/block_grid.hpp"
-#include "../components/cursor.hpp"
-#include "../components/game_logic.hpp"
-#include "../components/text_renderer.hpp"
-#include "../components/clear_anim_manager.hpp"
+#include "../engine/components/transform.hpp"
+#include "../engine/components/sprite_renderer.hpp"
+#include "../engine/components/text_renderer.hpp"
 #include "../components/start_screen.hpp"
-#include "../save_manager.hpp"
+#include "../components/block_grid.hpp"
+#include "../engine/save_manager.hpp"
 
 void init_title_scene(GameObjects::GameManager *gm)
 {

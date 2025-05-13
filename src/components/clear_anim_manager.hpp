@@ -18,7 +18,7 @@
  */
 
 #pragma once
-#include "../gameobject.hpp"
+#include "../engine/gameobject.hpp"
 
 #define CLEAR_ANIM_HORIZONTAL_ORIGIN 64
 #define CLEAR_ANIM_VERTICAL_ORIGIN 0

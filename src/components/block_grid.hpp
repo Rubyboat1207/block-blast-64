@@ -17,8 +17,8 @@
  * Copyright (C) 2025 Rubyboat (owner of https://github.com/Rubyboat1207)
  */
 #pragma once
-#include "../gameobject.hpp"
-#include "transform.hpp"
+#include "../engine/gameobject.hpp"
+#include "../engine/components/transform.hpp"
 
 enum class BlockState {
     EMPTY,

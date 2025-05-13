@@ -17,8 +17,7 @@
  * Copyright (C) 2025 Rubyboat (owner of https://github.com/Rubyboat1207)
  */
 
-#include "../gameobject.hpp"
-
+#include "../engine/gameobject.hpp"
 
 void init_main_scene(GameObjects::GameManager* gm);
 void init_title_scene(GameObjects::GameManager* gm);

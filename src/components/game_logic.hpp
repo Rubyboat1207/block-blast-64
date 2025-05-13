@@ -17,13 +17,13 @@
  * Copyright (C) 2025 Rubyboat (owner of https://github.com/Rubyboat1207)
  */
 
- #pragma once
-#include "../gameobject.hpp"
-#include "transform.hpp"
-#include "sprite_renderer.hpp"
+#pragma once
+#include "../engine/gameobject.hpp"
+#include "../engine/components/transform.hpp"
+#include "../engine/components/sprite_renderer.hpp"
 #include "block_grid.hpp"
 #include "selector.hpp"
-#include "text_renderer.hpp"
+#include "../engine/components/text_renderer.hpp"
 #include "clear_anim_manager.hpp"
 #include "cursor.hpp"
 #include <utility>

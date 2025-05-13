@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 #include <libdragon.h>
-#include "gameobject.hpp"
+#include "engine/gameobject.hpp"
 #include "scenes/scenes.hpp"
 
 int main(void)

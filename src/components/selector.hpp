@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#include "../gameobject.hpp"
-#include "transform.hpp"
+#include "../engine/gameobject.hpp"
+#include "../engine/components/transform.hpp"
 
 COMPONENT(Selector)
     Transform* transform;

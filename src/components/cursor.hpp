@@ -18,10 +18,10 @@
  */
 
 #pragma once
-#include "../gameobject.hpp"
-#include "transform.hpp"
+#include "../engine/gameobject.hpp"
+#include "../engine/components/transform.hpp"
 #include "block_grid.hpp"
-#include "sprite_renderer.hpp"
+#include "../engine/components/sprite_renderer.hpp"
 
 
 

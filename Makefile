@@ -7,6 +7,7 @@ WAV_FILES=$(wildcard $(AUDIO_DIR)/*.wav)
 XM_FILES=$(wildcard $(AUDIO_DIR)/*.xm)
 YM_FILES=$(wildcard $(AUDIO_DIR)/*.ym)
 AUDIO_FILES=$(WAV_FILES) $(XM_FILES) $(YM_FILES)
+CXXFLAGS += -Isrc
 
 AUDIO_OUTPUT_FILES=$(subst resources/audio,filesystem,$(WAV_FILES:.wav=.wav64) $(XM_FILES:.xm=.xm64) $(YM_FILES:.ym=.ym64))
 
@@ -15,11 +16,8 @@ include $(N64_INST)/include/n64.mk
 all: BlockBlast64.z64
 .PHONY: all
 
-SRCS := $(wildcard $(SOURCE_DIR)/*.cpp) \
-        $(wildcard $(SOURCE_DIR)/*/*.cpp)
-
-OBJS := $(patsubst $(SOURCE_DIR)/%.cpp, $(BUILD_DIR)/%.o, \
-         $(patsubst $(SOURCE_DIR)/*/%.cpp, $(BUILD_DIR)/%.o, $(SRCS)))
+SRCS := $(shell find $(SOURCE_DIR) -name '*.cpp')
+OBJS := $(patsubst $(SOURCE_DIR)/%.cpp, $(BUILD_DIR)/%.o, $(SRCS))
 
 
 
