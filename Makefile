@@ -25,7 +25,7 @@ BlockBlast64.z64: $(BUILD_DIR)/BlockBlast64.dfs
 BlockBlast64.z64: N64_ED64ROMCONFIGFLAGS=-w eeprom4k
 
 $(AUDIO_OUTPUT_FILES): $(AUDIO_FILES)
-	audioconv64 -o filesystem/audio/ $(AUDIO_DIR)/$(subst .ym64,.ym,$(subst .xm64,.xm,$(subst .wav64,.wav,$(notdir $@))))
+	$(N64_INST)/bin/audioconv64 -o filesystem/audio/ $(AUDIO_DIR)/$(subst .ym64,.ym,$(subst .xm64,.xm,$(subst .wav64,.wav,$(notdir $@))))
 
 
 $(BUILD_DIR)/BlockBlast64.dfs: $(wildcard filesystem/*) $(AUDIO_OUTPUT_FILES)
